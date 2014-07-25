@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 import java.awt.GridLayout;
@@ -25,17 +26,25 @@ import javax.swing.JScrollBar;
 
 import java.awt.ScrollPane;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.swing.JScrollPane;
 
+import jdk.nashorn.internal.scripts.JO;
+
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 public class MainWindow {
-	
-	private Storage storage;
 	
 	private JFrame frame;
 	private JTextField textField;
 	private JTextArea textArea;
 	private JScrollPane scrollPane;
+	
+	
+	private Storage storage;
 
 	/**
 	 * Launch the application.
@@ -81,6 +90,14 @@ public class MainWindow {
 		textArea.setColumns(10);
 		
 		textField = new JTextField();
+		textField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER){
+					onClickAdd();
+				}
+			}
+		});
 		textField.setBounds(6, 6, 164, 28);
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
@@ -97,22 +114,50 @@ public class MainWindow {
 	
 	private void onClickAdd(){
 		//textArea.setText(FormulaElement.parseFormula(textField.getText()).toString());
-		if(parseCommand())
-			textArea.append(textField.getText()+"\n");
+//		if(parseCommand())
+//			textArea.append(textField.getText()+"\n");
+		parseCommand();
 		printStoredFormulas();
 	}
 	
 	private boolean parseCommand(){
 		String text = textField.getText();
+		boolean addFormula = false;
 		text = text.replaceAll("\\s", ""); //Remove all white spaces
-		if(text.matches("^\\w=[^=]+$")){
+		if(text.matches("^\\w=[^=]+$")){  //check for string with character followed by '=' followed by any character or digit other than '='
 			String[] comps = text.split("=");
 			//FormulaElement formula = FormulaElement.parseFormula(comps[1]);
-			storage.addFormula(comps[0], comps[1]);
+			if(storage.getStoredFormulas().containsKey(comps[0])){
+				String message = "There's already a formula assigned to '" + comps[0] + "'.\nWould you like to replace?";
+				//Object[] options = {"Yes", "No"};
+				int response = JOptionPane.showOptionDialog(frame, message, "Formula replace", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+				
+				if(response == JOptionPane.YES_OPTION){
+					addFormula = true;
+				}
+			} else {
+				addFormula = true;
+			}
+			
+			if(addFormula){
+				storage.addFormula(comps[0], comps[1]);
+				textArea.append(textField.getText()+"\n");
+			}
+		} else if(text.matches("^\\w\\(.+\\)$")){
 			
 		}
+		
 		return true;
 	}
+	
+//	private boolean reuseAvailable(String text){
+//		StringTokenizer tokenizer = new StringTokenizer(text, "+-/^()*", true);
+//		String prevToken = "";
+//		while(tokenizer.hasMoreTokens()){
+//			String token = tokenizer.nextToken();
+//			if(token.matches("(") && prev)
+//		}
+//	}
 	
 	private void printStoredFormulas(){
 		for (Map.Entry<String, String> entry : storage.getStoredFormulas().entrySet()) {
