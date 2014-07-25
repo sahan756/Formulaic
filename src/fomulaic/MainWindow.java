@@ -20,12 +20,18 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
 import javax.swing.JScrollBar;
+
 import java.awt.ScrollPane;
+import java.util.Map;
+
 import javax.swing.JScrollPane;
 
 public class MainWindow {
-
+	
+	private Storage storage;
+	
 	private JFrame frame;
 	private JTextField textField;
 	private JTextArea textArea;
@@ -51,6 +57,7 @@ public class MainWindow {
 	 * Create the application.
 	 */
 	public MainWindow() {
+		storage = new Storage();
 		initialize();
 	}
 
@@ -89,15 +96,29 @@ public class MainWindow {
 	}
 	
 	private void onClickAdd(){
-		textArea.setText(FormulaElement.parseFormula(textField.getText()).toString());
+		//textArea.setText(FormulaElement.parseFormula(textField.getText()).toString());
+		if(parseCommand())
+			textArea.append(textField.getText()+"\n");
+		printStoredFormulas();
 	}
 	
-	private void parseCommand(){
+	private boolean parseCommand(){
 		String text = textField.getText();
 		text = text.replaceAll("\\s", ""); //Remove all white spaces
-		if(text.matches("^\\w=.*$")){
+		if(text.matches("^\\w=[^=]+$")){
 			String[] comps = text.split("=");
+			//FormulaElement formula = FormulaElement.parseFormula(comps[1]);
+			storage.addFormula(comps[0], comps[1]);
 			
+		}
+		return true;
+	}
+	
+	private void printStoredFormulas(){
+		for (Map.Entry<String, String> entry : storage.getStoredFormulas().entrySet()) {
+		    String key = entry.getKey();
+		    Object value = entry.getValue();
+		    System.out.println("name: " + key + " formula: " + value);
 		}
 	}
 }
