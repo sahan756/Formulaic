@@ -17,16 +17,29 @@ import javax.swing.JSeparator;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JCheckBox;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.JTextArea;
+import javax.swing.border.BevelBorder;
+import javax.swing.event.ListSelectionListener;
 
-public class MainFrame extends JFrame {
+import java.awt.Component;
+
+import javax.swing.AbstractListModel;
+import javax.swing.DropMode;
+
+public class MainFrame extends JFrame implements ActionListener {
 
 	private JPanel contentPane;
-	private JTextField textField;
+	JTextArea textArea = new JTextArea();
 	private JTextField textField_1;
 	private JTextField textField_2;
 	private JTextField textField_3;
@@ -43,7 +56,46 @@ public class MainFrame extends JFrame {
 	private JTextField textField_14;
 	private JTextField textField_15;
 	private JTextField textField_16;
-
+	
+	JList list_1;
+    DefaultListModel listModel;
+    JScrollPane pane;
+	
+	JButton button_1 = new JButton("1");
+	JButton button_2 = new JButton("2");
+	JButton button_3 = new JButton("3");
+	JButton button_4 = new JButton("4");
+	JButton button_5 = new JButton("5");
+	JButton button_6 = new JButton("6");
+	JButton button_7 = new JButton("7");
+	JButton button_8 = new JButton("8");
+	JButton button_9 = new JButton("9");
+	JButton button_0 = new JButton("0");
+	JButton button_  = new JButton(".");
+	JButton button_eq= new JButton("=");
+	JButton button_sin = new JButton("Sin");
+	JButton button_Cos = new JButton("cos");
+	JButton button_Tan = new JButton("tan");	
+	JButton button_plus = new JButton("+");
+	JButton button_minus = new JButton("-");	
+	JButton button_mul = new JButton("*");
+	JButton button_dev = new JButton("/");
+	JButton button_opBr = new JButton("(");
+	JButton button_cloBr = new JButton(")");
+	JButton button_power = new JButton("^");
+	JButton btnX = new JButton("X");
+	JButton btnA = new JButton("A");
+	JButton btnY = new JButton("Y");
+	JButton btnB = new JButton("B");
+	JButton btnZ = new JButton("Z");
+	JButton btnC = new JButton("C");
+	JButton btnI = new JButton("I");
+	JButton btnJ = new JButton("J");
+	JButton btnK = new JButton("K");
+	JButton btnL = new JButton("L");
+	JButton btnM = new JButton("M");
+	JButton btnN = new JButton("N");	
+	
 	/**
 	 * Launch the application.
 	 */
@@ -56,8 +108,7 @@ public class MainFrame extends JFrame {
          //   UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");   
          //   UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
 		//	UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");	
-	
-			
+		
             new MainWindow();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -67,6 +118,7 @@ public class MainFrame extends JFrame {
 		    EventQueue.invokeLater(new Runnable() {
 			public void run() {				
 					MainFrame frame = new MainFrame();
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					frame.setVisible(true);
 			}
 		});
@@ -91,190 +143,200 @@ public class MainFrame extends JFrame {
 		panel.setLayout(null);
 		
 		JLabel lblFormula = new JLabel("Formula ");
-		lblFormula.setFont(new Font("Cambria", Font.BOLD, 12));
+		lblFormula.setForeground(Color.YELLOW);
+		lblFormula.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 12));
 		lblFormula.setBounds(10, 14, 54, 14);
 		panel.add(lblFormula);
 		
-		textField = new JTextField();
-		textField.setBounds(61, 9, 266, 27);
-		panel.add(textField);
-		textField.setColumns(10);
-		
 		JLabel lblResult = new JLabel("Result ");
-		lblResult.setFont(new Font("Cambria", Font.BOLD, 12));
+		lblResult.setForeground(Color.YELLOW);
+		lblResult.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 12));
 		lblResult.setBounds(10, 44, 54, 14);
 		panel.add(lblResult);
 		
 		textField_1 = new JTextField();
+		textField_1.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		textField_1.setColumns(10);
 		textField_1.setBounds(61, 39, 266, 27);
 		panel.add(textField_1);
 		
 		JButton btnLoad = new JButton("Load");
+		btnLoad.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		btnLoad.setBounds(115, 77, 64, 23);
 		panel.add(btnLoad);
 		
 		JButton btnSave = new JButton("Save");
+		btnSave.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		btnSave.setBounds(189, 77, 64, 23);
 		panel.add(btnSave);
 		
 		JButton btnClear = new JButton("Clear");
+		btnClear.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		btnClear.setBounds(263, 77, 64, 23);
 		panel.add(btnClear);
 		
 		JButton btnEvaluate = new JButton("Evaluate");
+		btnEvaluate.setForeground(Color.RED);
+		btnEvaluate.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		btnEvaluate.setBounds(20, 77, 85, 23);
 		panel.add(btnEvaluate);
+		textArea.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		textArea.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
+		
+		
+		textArea.setBounds(61, 10, 266, 27);
+		textArea.setAlignmentX(CENTER_ALIGNMENT);
+		panel.add(textArea);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(10, 238, 337, 243);
-		panel_1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		panel_1.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		contentPane.add(panel_1);
 		panel_1.setLayout(null);
-		
-		JButton btnNewButton = new JButton("7");
-		btnNewButton.setBounds(10, 11, 41, 25);
-		panel_1.add(btnNewButton);
-		
-		JButton button = new JButton("8");
-		button.setBounds(61, 11, 41, 25);
-		panel_1.add(button);
-		
-		JButton button_1 = new JButton("9");
-		button_1.setBounds(112, 11, 41, 25);
-		panel_1.add(button_1);
-		
-		JButton button_2 = new JButton("4");
-		button_2.setBounds(10, 47, 41, 25);
-		panel_1.add(button_2);
-		
-		JButton button_3 = new JButton("5");
-		button_3.setBounds(61, 47, 41, 25);
-		panel_1.add(button_3);
-		
-		JButton button_4 = new JButton("6");
-		button_4.setBounds(112, 47, 41, 25);
-		panel_1.add(button_4);
-		
-		JButton button_5 = new JButton("1");
-		button_5.setBounds(10, 83, 41, 25);
-		panel_1.add(button_5);
-		
-		JButton button_6 = new JButton("2");
-		button_6.setBounds(61, 83, 41, 25);
-		panel_1.add(button_6);
-		
-		JButton button_7 = new JButton("3");
-		button_7.setBounds(112, 83, 41, 25);
+				
+		button_7.addActionListener(this);
+		button_7.setBounds(10, 11, 41, 25);
 		panel_1.add(button_7);
-		
-		JButton button_8 = new JButton("7");
-		button_8.setBounds(10, 119, 41, 25);
+				
+		button_8.addActionListener(this);
+		button_8.setBounds(61, 11, 41, 25);
 		panel_1.add(button_8);
 		
-		JButton button_9 = new JButton(".");
-		button_9.setBounds(61, 119, 41, 25);
+		button_9.addActionListener(this);
+		button_9.setBounds(112, 11, 41, 25);
 		panel_1.add(button_9);
 		
-		JButton button_10 = new JButton("=");
-		button_10.setBounds(112, 119, 41, 25);
-		panel_1.add(button_10);
+		button_4.addActionListener(this);
+		button_4.setBounds(10, 47, 41, 25);
+		panel_1.add(button_4);
 		
-		JButton btnNewButton_1 = new JButton("Sin");
-		btnNewButton_1.setBounds(170, 12, 55, 23);
-		panel_1.add(btnNewButton_1);
+		button_5.addActionListener(this);
+		button_5.setBounds(61, 47, 41, 25);
+		panel_1.add(button_5);
 		
-		JButton btnCos = new JButton("cos");
-		btnCos.setBounds(170, 48, 55, 23);
-		panel_1.add(btnCos);
+		button_6.addActionListener(this);
+		button_6.setBounds(112, 47, 41, 25);
+		panel_1.add(button_6);
 		
-		JButton btnTan = new JButton("tan");
-		btnTan.setBounds(170, 84, 55, 23);
-		panel_1.add(btnTan);
+		button_1.addActionListener(this);
+		button_1.setBounds(10, 83, 41, 25);
+		panel_1.add(button_1);
 		
-		JButton button_11 = new JButton("+");
-		button_11.setBounds(235, 12, 41, 25);
-		panel_1.add(button_11);
+		button_2.addActionListener(this);
+		button_2.setBounds(61, 83, 41, 25);
+		panel_1.add(button_2);
 		
-		JButton button_12 = new JButton("-");
-		button_12.setBounds(286, 12, 41, 25);
-		panel_1.add(button_12);
+		button_3.addActionListener(this);
+		button_3.setBounds(112, 83, 41, 25);
+		panel_1.add(button_3);
 		
-		JButton button_13 = new JButton("*");
-		button_13.setBounds(235, 48, 41, 25);
-		panel_1.add(button_13);
+		button_0.addActionListener(this);
+		button_0.setBounds(10, 119, 41, 25);
+		panel_1.add(button_0);
+			
+		button_.addActionListener(this);
+		button_.setBounds(61, 119, 41, 25);
+		panel_1.add(button_);
 		
-		JButton button_14 = new JButton("/");
-		button_14.setBounds(286, 48, 41, 25);
-		panel_1.add(button_14);
+		button_eq.addActionListener(this);
+		button_eq.setBounds(112, 119, 41, 25);
+		panel_1.add(button_eq);
 		
-		JButton button_15 = new JButton("(");
-		button_15.setBounds(235, 84, 41, 25);
-		panel_1.add(button_15);
+		button_sin.addActionListener(this);
+		button_sin.setBounds(170, 12, 55, 23);
+		panel_1.add(button_sin);
 		
-		JButton button_16 = new JButton(")");
-		button_16.setBounds(286, 84, 41, 25);
-		panel_1.add(button_16);
+		button_Cos.addActionListener(this);
+		button_Cos.setBounds(170, 48, 55, 23);
+		panel_1.add(button_Cos);
 		
-		JButton button_17 = new JButton("^");
-		button_17.setBounds(170, 120, 55, 23);
-		panel_1.add(button_17);
+		button_Tan.addActionListener(this);
+		button_Tan.setBounds(170, 84, 55, 23);
+		panel_1.add(button_Tan);
 		
-		JButton btnX = new JButton("X");
+		button_plus.addActionListener(this);
+		button_plus.setBounds(235, 12, 41, 25);
+		panel_1.add(button_plus);
+		
+		button_minus.addActionListener(this);
+		button_minus.setBounds(286, 12, 41, 25);
+		panel_1.add(button_minus);
+		
+		button_mul.addActionListener(this);
+		button_mul.setBounds(235, 48, 41, 25);
+		panel_1.add(button_mul);
+		
+		button_dev.addActionListener(this);
+		button_dev.setBounds(286, 48, 41, 25);
+		panel_1.add(button_dev);
+		
+		button_opBr.addActionListener(this);
+		button_opBr.setBounds(235, 84, 41, 25);
+		panel_1.add(button_opBr);
+		
+		button_cloBr.addActionListener(this);
+		button_cloBr.setBounds(286, 84, 41, 25);
+		panel_1.add(button_cloBr);
+		
+		button_power.addActionListener(this);
+		button_power.setBounds(170, 120, 55, 23);
+		panel_1.add(button_power);
+		
+		btnX.addActionListener(this);
 		btnX.setPreferredSize(new Dimension(45, 23));
 		btnX.setBounds(10, 172, 45, 25);
 		panel_1.add(btnX);
 		
-		JButton btnA = new JButton("A");
+		btnA.addActionListener(this);
 		btnA.setBounds(10, 208, 45, 25);
 		panel_1.add(btnA);
 		
-		JButton btnY = new JButton("Y");
+		btnY.addActionListener(this);
 		btnY.setPreferredSize(new Dimension(45, 23));
 		btnY.setBounds(61, 173, 45, 25);
 		panel_1.add(btnY);
 		
-		JButton btnB = new JButton("B");
+		btnB.addActionListener(this);
 		btnB.setPreferredSize(new Dimension(45, 23));
 		btnB.setBounds(61, 209, 45, 25);
 		panel_1.add(btnB);
 		
-		JButton btnZ = new JButton("Z");
+		btnZ.addActionListener(this);
 		btnZ.setPreferredSize(new Dimension(45, 23));
 		btnZ.setBounds(112, 173, 45, 25);
 		panel_1.add(btnZ);
 		
-		JButton btnC = new JButton("C");
+		btnC.addActionListener(this);
 		btnC.setPreferredSize(new Dimension(45, 23));
 		btnC.setBounds(112, 209, 45, 25);
 		panel_1.add(btnC);
 		
-		JButton btnI = new JButton("I");
+		btnI.addActionListener(this);
 		btnI.setBounds(184, 172, 45, 25);
 		panel_1.add(btnI);
 		
-		JButton btnJ = new JButton("J");
+		btnJ.addActionListener(this);
 		btnJ.setBounds(235, 172, 45, 25);
 		panel_1.add(btnJ);
 		
-		JButton btnK = new JButton("K");
+		btnK.addActionListener(this);
 		btnK.setBounds(286, 172, 45, 25);
 		panel_1.add(btnK);
 		
 		JSeparator separator = new JSeparator();
 		separator.setOpaque(true);
-		separator.setBounds(10, 155, 317, 2);
+		separator.setBounds(10, 155, 317, 6);
 		panel_1.add(separator);
 		
-		JButton btnL = new JButton("L");
+		btnL.addActionListener(this);
 		btnL.setBounds(184, 209, 45, 25);
 		panel_1.add(btnL);
 		
-		JButton btnM = new JButton("M");
+		btnM.addActionListener(this);
 		btnM.setBounds(235, 209, 45, 25);
 		panel_1.add(btnM);
 		
-		JButton btnN = new JButton("N");
+		btnN.addActionListener(this);
 		btnN.setBounds(286, 209, 45, 25);
 		panel_1.add(btnN);
 		
@@ -286,27 +348,75 @@ public class MainFrame extends JFrame {
 		panel_2.setLayout(null);
 		
 		JLabel lblFormulaList = new JLabel("Formula List");
+		lblFormulaList.setForeground(Color.YELLOW);
 		lblFormulaList.setFont(new Font("Cambria", Font.BOLD | Font.ITALIC, 11));
-		lblFormulaList.setBounds(10, 11, 70, 14);
+		lblFormulaList.setBounds(10, 0, 70, 19);
 		panel_2.add(lblFormulaList);
 		
-		JList list = 	new JList();
-		list.setBounds(171, 14, 0, 0);
-		list.setValueIsAdjusting(true);
-		panel_2.add(list);
+		listModel = new DefaultListModel();
+		list_1 = new JList(listModel);
+		 pane = new JScrollPane(list_1);
+		 pane.setViewportView(list_1);
+        listModel.addElement("3X + 2Y");
+        listModel.addElement("4Y - 52");
+        listModel.addElement("5k -20 + C");
 		
-		JButton btnNew = new JButton("New");
-		btnNew.setBounds(198, 7, 89, 23);
-		panel_2.add(btnNew);
 		
-		JButton btnUse = new JButton("Use");
-		btnUse.setBounds(198, 41, 89, 23);
-		panel_2.add(btnUse);
+	/*	list_1.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
+        list_1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list_1.setSelectedIndex(0);
+      //  list_1.addListSelectionListener((ListSelectionListener) this);
+        list_1.setVisibleRowCount(5);
+		list_1.setBounds(41, 97, 114, -60);*/
+		
+		
+		JPanel panel_6 = new JPanel();
+		panel_6.setBounds(189, 11, 98, 90);
+		panel_2.add(panel_6);
+		panel_6.setLayout(null);
 		
 		JButton btnEdit = new JButton("Edit");
-		btnEdit.setBounds(198, 75, 89, 23);
-		panel_2.add(btnEdit);
+		btnEdit.setBounds(10, 67, 78, 23);
+		panel_6.add(btnEdit);
 		
+		JButton btnUse = new JButton("Use");
+		btnUse.setBounds(10, 33, 78, 23);
+		panel_6.add(btnUse);
+		
+			JButton btnNew = new JButton("New");
+			btnNew.setBounds(10, -1, 78, 23);
+			panel_6.add(btnNew);
+			
+			JPanel panel_7 = new JPanel();
+			panel_7.setBounds(10, 21, 180, 80);
+			panel_2.add(panel_7);
+			panel_7.setLayout(new BorderLayout(0, 0));
+			panel_7.add(pane);
+
+ 
+   /*     //Create the list and put it in a scroll pane.
+        list = new JList(listModel);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setSelectedIndex(0);
+        list.addListSelectionListener(this);
+        list.setVisibleRowCount(5);
+        JScrollPane listScrollPane = new JScrollPane(list);
+		
+	/*	JList list = new JList();
+		list.setDropMode(DropMode.ON);
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.setModel(new AbstractListModel() {
+			String[] values = new String[] {"formula1", "formula2", "formula3"};
+			public int getSize() {
+				return values.length;
+			}
+			public Object getElementAt(int index) {
+				return values[index];
+			}
+		});
+		list.setBounds(24, 95, 142, -70);
+		panel_2.add(list);
+	*/	
 		JPanel panel_3 = new JPanel();
 		panel_3.setBounds(357, 238, 297, 243);
 		panel_3.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -314,6 +424,7 @@ public class MainFrame extends JFrame {
 		panel_3.setLayout(null);
 		
 		JLabel lblX = new JLabel("X = ");
+		lblX.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblX.setBounds(28, 14, 33, 14);
 		panel_3.add(lblX);
 		
@@ -323,6 +434,7 @@ public class MainFrame extends JFrame {
 		textField_2.setColumns(10);
 		
 		JLabel lblY = new JLabel("Y = ");
+		lblY.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblY.setBounds(28, 53, 33, 14);
 		panel_3.add(lblY);
 		
@@ -332,6 +444,7 @@ public class MainFrame extends JFrame {
 		textField_3.setColumns(10);
 		
 		JLabel lblZ = new JLabel("Z = ");
+		lblZ.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblZ.setBounds(28, 89, 33, 14);
 		panel_3.add(lblZ);
 		
@@ -341,6 +454,7 @@ public class MainFrame extends JFrame {
 		panel_3.add(textField_4);
 		
 		JLabel lblA = new JLabel("A = ");
+		lblA.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblA.setBounds(28, 140, 33, 14);
 		panel_3.add(lblA);
 		
@@ -350,6 +464,7 @@ public class MainFrame extends JFrame {
 		panel_3.add(textField_5);
 		
 		JLabel lblC = new JLabel("C =");
+		lblC.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblC.setBounds(28, 221, 33, 14);
 		panel_3.add(lblC);
 		
@@ -364,10 +479,12 @@ public class MainFrame extends JFrame {
 		panel_3.add(textField_7);
 		
 		JLabel lblB = new JLabel("B =");
+		lblB.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblB.setBounds(28, 180, 33, 14);
 		panel_3.add(lblB);
 		
 		JLabel lblI = new JLabel("I = ");
+		lblI.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblI.setBounds(173, 11, 36, 14);
 		panel_3.add(lblI);
 		
@@ -402,22 +519,27 @@ public class MainFrame extends JFrame {
 		panel_3.add(textField_13);
 		
 		JLabel lblJ = new JLabel("J = ");
+		lblJ.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblJ.setBounds(173, 50, 36, 14);
 		panel_3.add(lblJ);
 		
 		JLabel lblK = new JLabel("K = ");
+		lblK.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblK.setBounds(173, 86, 36, 14);
 		panel_3.add(lblK);
 		
 		JLabel lblL = new JLabel("L = ");
+		lblL.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblL.setBounds(173, 137, 36, 14);
 		panel_3.add(lblL);
 		
 		JLabel lblM = new JLabel("M = ");
+		lblM.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblM.setBounds(173, 177, 36, 14);
 		panel_3.add(lblM);
 		
 		JLabel lblN = new JLabel("N = ");
+		lblN.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblN.setBounds(173, 218, 36, 14);
 		panel_3.add(lblN);
 		
@@ -428,31 +550,40 @@ public class MainFrame extends JFrame {
 		panel_4.setLayout(null);
 		
 		textField_15 = new JTextField();
+		textField_15.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		textField_15.setBounds(132, 36, 195, 20);
 		textField_15.setColumns(10);
 		panel_4.add(textField_15);
 		
 		textField_14 = new JTextField();
+		textField_14.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		textField_14.setBounds(132, 67, 195, 20);
 		panel_4.add(textField_14);
 		textField_14.setColumns(10);
 		
 		textField_16 = new JTextField();
+		textField_16.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		textField_16.setColumns(10);
 		textField_16.setBounds(132, 11, 195, 20);
 		panel_4.add(textField_16);
 		
-		JLabel lblStDerivative = new JLabel("1 st Derivative");
-		lblStDerivative.setBounds(10, 14, 112, 14);
-		panel_4.add(lblStDerivative);
-		
 		JLabel lblNdDerivative = new JLabel("2 nd Derivative");
+		lblNdDerivative.setForeground(Color.ORANGE);
+		lblNdDerivative.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 12));
 		lblNdDerivative.setBounds(10, 39, 112, 14);
 		panel_4.add(lblNdDerivative);
 		
 		JLabel lblSymbolicDifferentiation = new JLabel("Symbolic Differentiation");
+		lblSymbolicDifferentiation.setForeground(Color.ORANGE);
+		lblSymbolicDifferentiation.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 12));
 		lblSymbolicDifferentiation.setBounds(10, 70, 127, 14);
 		panel_4.add(lblSymbolicDifferentiation);
+		
+		JLabel lblStDerivative = new JLabel("1 st Derivative");
+		lblStDerivative.setForeground(Color.ORANGE);
+		lblStDerivative.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 12));
+		lblStDerivative.setBounds(10, 14, 112, 14);
+		panel_4.add(lblStDerivative);
 		
 		JPanel panel_5 = new JPanel();
 		panel_5.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -461,31 +592,151 @@ public class MainFrame extends JFrame {
 		panel_5.setLayout(null);
 		
 		JCheckBox chckbxFromula = new JCheckBox("Fromula");
+		chckbxFromula.setForeground(Color.ORANGE);
+		chckbxFromula.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 12));
 		chckbxFromula.setVerticalTextPosition(SwingConstants.BOTTOM);
 		chckbxFromula.setVerticalAlignment(SwingConstants.BOTTOM);
 		chckbxFromula.setBounds(168, 7, 110, 23);
 		panel_5.add(chckbxFromula);
 		
 		JCheckBox chckbxStDerivative = new JCheckBox("1 st Derivative");
+		chckbxStDerivative.setForeground(Color.ORANGE);
+		chckbxStDerivative.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 12));
 		chckbxStDerivative.setBounds(6, 8, 147, 23);
 		panel_5.add(chckbxStDerivative);
 		
 		JCheckBox chckbxNdDerivative = new JCheckBox("2 nd Derivative");
+		chckbxNdDerivative.setForeground(Color.ORANGE);
+		chckbxNdDerivative.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 12));
 		chckbxNdDerivative.setBounds(6, 34, 147, 23);
 		panel_5.add(chckbxNdDerivative);
 		
 		JButton btnDrawGraph = new JButton("Draw Graph");
+		btnDrawGraph.setForeground(new Color(255, 0, 0));
+		btnDrawGraph.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		btnDrawGraph.setBounds(6, 65, 110, 23);
 		panel_5.add(btnDrawGraph);
 		
 		JButton btnSave_1 = new JButton("Save");
+		btnSave_1.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		btnSave_1.setBounds(138, 64, 63, 23);
 		panel_5.add(btnSave_1);
 		
 		JButton btnLoad_1 = new JButton("Load");
+		btnLoad_1.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		btnLoad_1.setBounds(215, 65, 63, 23);
 		panel_5.add(btnLoad_1);
 		
 
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		Object source = e.getSource();
+		
+		if(source == button_0){
+			textArea.append("0");
+		}
+		if(source == button_1){
+			textArea.append("1");
+		}
+		if(source == button_2){
+			textArea.append("2");
+		}
+		if(source == button_3){
+			textArea.append("3");
+		}
+		if(source == button_4){
+			textArea.append("4");
+		}
+		if(source == button_5){
+			textArea.append("5");
+		}
+		if(source == button_6){
+			textArea.append("6");
+		}
+		if(source == button_7){
+			textArea.append("7");
+		}
+		if(source == button_8){
+			textArea.append("8");
+		}
+		if(source == button_9){
+			textArea.append("9");
+		}
+		if(source == button_){
+			textArea.append(".");
+		}
+		if(source == button_eq){
+			textArea.append("=");
+		}
+		if(source == button_sin){
+			textArea.append("sin");
+		}
+		if(source == button_Cos){
+			textArea.append("cos");
+		}
+		if(source == button_Tan){
+			textArea.append("tan");
+		}
+		if(source == button_minus){
+			textArea.append("-");
+		}
+		if(source == button_mul){
+			textArea.append("*");
+		}
+		if(source == button_dev){
+			textArea.append("/");
+		}
+		if(source == button_opBr){
+			textArea.append("(");
+		}
+		if(source == button_cloBr){
+			textArea.append(")");
+		}
+		if(source == button_power){
+			textArea.append("^");
+		}
+		if(source == button_plus){
+			textArea.append("+");
+		}
+		if(source == btnA){
+			textArea.append("A");
+		}
+		if(source == btnB){
+			textArea.append("B");
+		}
+		if(source == btnC){
+			textArea.append("C");
+		}
+		if(source == btnX){
+			textArea.append("X");
+		}
+		if(source == btnY){
+			textArea.append("Y");
+		}
+		if(source == btnZ){
+			textArea.append("Z");
+		}
+		if(source == btnI){
+			textArea.append("I");
+		}
+		if(source == btnJ){
+			textArea.append("J");
+		}
+		if(source == btnK){
+			textArea.append("K");
+		}
+		if(source == btnL){
+			textArea.append("L");
+		}
+		if(source == btnM){
+			textArea.append("M");
+		}
+		if(source == btnN){
+			textArea.append("N");
+		}
+		
 	}
 }
