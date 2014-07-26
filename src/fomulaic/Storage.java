@@ -3,7 +3,7 @@ package fomulaic;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.sun.javafx.collections.MappingChange.Map;
+//import com.sun.javafx.collections.MappingChange.Map;
 
 import formulator.FormulaElement;
 
