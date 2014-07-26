@@ -124,28 +124,63 @@ public class MainWindow {
 		String text = textField.getText();
 		boolean addFormula = false;
 		text = text.replaceAll("\\s", ""); //Remove all white spaces
-		if(text.matches("^\\w=[^=]+$")){  //check for string with character followed by '=' followed by any character or digit other than '='
-			String[] comps = text.split("=");
-			//FormulaElement formula = FormulaElement.parseFormula(comps[1]);
-			if(storage.getStoredFormulas().containsKey(comps[0])){
-				String message = "There's already a formula assigned to '" + comps[0] + "'.\nWould you like to replace?";
-				//Object[] options = {"Yes", "No"};
-				int response = JOptionPane.showOptionDialog(frame, message, "Formula replace", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-				
-				if(response == JOptionPane.YES_OPTION){
+		
+		//new test with tokenizer
+		StringTokenizer tokenizer = new StringTokenizer(text, "+-/^()*=", true);
+		String prevToken = "";
+		int i = 0;
+		while(tokenizer.hasMoreTokens()){
+			i++;
+			String token = tokenizer.nextToken();
+			if(token.matches("=") && prevToken.matches("\\w") && i==2){
+				String[] comps = text.split("=");
+				//FormulaElement formula = FormulaElement.parseFormula(comps[1]);
+				if(storage.getStoredFormulas().containsKey(comps[0])){
+					String message = "There's already a formula assigned to '" + comps[0] + "'.\nWould you like to replace?";
+					//Object[] options = {"Yes", "No"};
+					int response = JOptionPane.showOptionDialog(frame, message, "Formula replace", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+					
+					if(response == JOptionPane.YES_OPTION){
+						addFormula = true;
+					}
+				} else {
 					addFormula = true;
 				}
-			} else {
-				addFormula = true;
+				
+				if(addFormula){
+					storage.addFormula(comps[0], comps[1]);
+					textArea.append(textField.getText()+"\n");
+				}
+			} else if(token.matches("(") && prevToken.matches("\\w") && i==2){
+				
 			}
-			
-			if(addFormula){
-				storage.addFormula(comps[0], comps[1]);
-				textArea.append(textField.getText()+"\n");
-			}
-		} else if(text.matches("^\\w\\(.+\\)$")){
-			
+			prevToken = token;
 		}
+		
+//		if(text.matches("^\\w=[^=]+$")){  //check for string with character followed by '=' followed by any character or digit other than '='
+//			String[] comps = text.split("=");
+//			//FormulaElement formula = FormulaElement.parseFormula(comps[1]);
+//			if(storage.getStoredFormulas().containsKey(comps[0])){
+//				String message = "There's already a formula assigned to '" + comps[0] + "'.\nWould you like to replace?";
+//				//Object[] options = {"Yes", "No"};
+//				int response = JOptionPane.showOptionDialog(frame, message, "Formula replace", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+//				
+//				if(response == JOptionPane.YES_OPTION){
+//					addFormula = true;
+//				}
+//			} else {
+//				addFormula = true;
+//			}
+//			
+//			if(addFormula){
+//				storage.addFormula(comps[0], comps[1]);
+//				textArea.append(textField.getText()+"\n");
+//			}
+//		} else if(text.matches("^\\w\\(.+\\)$")){
+//			if(text.matches("^\\w\\(\\d+\\)$")){
+//				
+//			}
+//		}
 		
 		return true;
 	}
