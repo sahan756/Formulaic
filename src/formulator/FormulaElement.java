@@ -17,6 +17,10 @@ public class FormulaElement {
 		this.setVariableValue(varName, value);
 	}
 	
+	public void setVariableValue(double value) {
+		this.setVariableValue(value);
+	}
+	
 	public double getVariableValue(String varName) {
 		return this.getVariableValue(varName);
 	}

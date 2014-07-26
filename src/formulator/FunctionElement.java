@@ -33,6 +33,19 @@ public class FunctionElement extends FormulaElement{
 		}
 	}
 	
+	//assign value for variable without specifying name.
+	//useful if formula has one variable.
+	//otherwise it will assign same value for all variables.
+	
+	public void setVariableValue(double value) {
+		Vector<FormulaElement> args = this.getArgList();
+		for (FormulaElement element : args) {
+			if(!(element instanceof ConstantElement)){
+				element.setVariableValue(value);
+			}
+		}
+	}
+	
 	public double getVariableValue(String varName) {
 		Vector<FormulaElement> args = this.getArgList();
 		for (FormulaElement element : args) {

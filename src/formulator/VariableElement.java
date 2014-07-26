@@ -40,6 +40,12 @@ public class VariableElement extends FormulaElement{
 	}
 	
 	@Override
+	public void setVariableValue(double value) {
+		this.setValue(value);
+		isFullyGrounded = true;
+	}
+	
+	@Override
 	public double getVariableValue(String varName) {
 		if(this.getVarName().equals(varName)){
 			return this.getValue();

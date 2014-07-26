@@ -9,6 +9,7 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
 
 import java.awt.GridLayout;
 
@@ -33,6 +34,8 @@ import javax.swing.JScrollPane;
 
 //import jdk.nashorn.internal.scripts.JO;
 
+
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -50,6 +53,11 @@ public class MainWindow {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+//		try{
+//			UIManager.setLookAndFeel("com.jtattoo.plaf.hifi.HiFiLookAndFeel");
+//		} catch(Exception e){
+//			e.printStackTrace();
+//		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -116,45 +124,82 @@ public class MainWindow {
 		//textArea.setText(FormulaElement.parseFormula(textField.getText()).toString());
 //		if(parseCommand())
 //			textArea.append(textField.getText()+"\n");
-		parseCommand();
+		if(parseCommand()){
+			textField.setText("");
+		}
 		printStoredFormulas();
 	}
 	
 	private boolean parseCommand(){
 		String text = textField.getText();
-		boolean addFormula = false;
-		text = text.replaceAll("\\s", ""); //Remove all white spaces
+		boolean addFormula = false, appendFormula = false, appendValue = false;
+		//text = text.replaceAll("\\s", ""); //Remove all white spaces
 		
 		//new test with tokenizer
-		StringTokenizer tokenizer = new StringTokenizer(text, "+-/^()*=", true);
-		String prevToken = "";
-		int i = 0;
+		StringTokenizer tokenizer = new StringTokenizer(text, "+-/^()*= ", true);
+		String prevToken = "", formName = "", formulaText = "", varValueText = "", varName = "";
+		int i = 0, action = 0, level = 0;
 		while(tokenizer.hasMoreTokens()){
-			i++;
+			
 			String token = tokenizer.nextToken();
+			if(token.matches("\\s")){
+				continue;
+			}
+			i++;
 			if(token.matches("=") && prevToken.matches("\\w") && i==2){
-				String[] comps = text.split("=");
+				formName = prevToken;
 				//FormulaElement formula = FormulaElement.parseFormula(comps[1]);
-				if(storage.getStoredFormulas().containsKey(comps[0])){
-					String message = "There's already a formula assigned to '" + comps[0] + "'.\nWould you like to replace?";
-					//Object[] options = {"Yes", "No"};
-					int response = JOptionPane.showOptionDialog(frame, message, "Formula replace", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-					
-					if(response == JOptionPane.YES_OPTION){
-						addFormula = true;
-					}
+				action = KeyValues.COMMAND_ASSIGN_FORMULA;
+				appendFormula = true;
+			} else if(appendFormula) {
+				formulaText += token;
+			}
+			
+			if(token.matches("\\(") && prevToken.matches("\\w") && prevToken.length() == 1 && i==2){
+				if(storage.getStoredFormulas().containsKey(prevToken)){
+					//level++;
+					appendValue = true;
+					varName = prevToken;
+				}
+			} else if(appendValue){
+				if(token.matches("\\)")){
+					assignVariableValue(varName, varValueText);
+					appendValue = false;
+					varValueText = "";
+				} else if(token.matches("^[a-zA-Z]$") && varValueText.length() > 0){
+					assignVariableValue(varName, varValueText);
+					//varName = token;
+					varValueText = token;
 				} else {
-					addFormula = true;
+					varValueText += token;
 				}
-				
-				if(addFormula){
-					storage.addFormula(comps[0], comps[1]);
-					textArea.append(textField.getText()+"\n");
-				}
-			} else if(token.matches("(") && prevToken.matches("\\w") && i==2){
-				
 			}
 			prevToken = token;
+		}
+		
+		switch (action) {
+		case KeyValues.COMMAND_ASSIGN_FORMULA:
+			if(storage.getStoredFormulas().containsKey(formName)){
+				String message = "There's already a formula assigned to '" + formName + "'.\nWould you like to replace?";
+				//Object[] options = {"Yes", "No"};
+				int response = JOptionPane.showOptionDialog(frame, message, "Formula replace", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+				
+				if(response == JOptionPane.YES_OPTION){
+					addFormula = true;
+				}
+			} else {
+				addFormula = true;
+			}
+			
+			if(addFormula){
+				//storage.addFormula(varName, formulaText);
+				storage.addFormula(formName, FormulaElement.parseFormula(formulaText));
+				textArea.append(textField.getText()+"\n");
+			}
+			break;
+			
+		default:
+			break;
 		}
 		
 //		if(text.matches("^\\w=[^=]+$")){  //check for string with character followed by '=' followed by any character or digit other than '='
@@ -185,6 +230,26 @@ public class MainWindow {
 		return true;
 	}
 	
+	private void assignVariableValue(String formName, String valueText){
+		try {
+			FormulaElement element = storage.getStoredFormulas().get(formName);
+			if(valueText.matches("^\\w=[\\d\\.]+$")){
+				String[] comp = valueText.split("=");
+				double value = Double.valueOf(comp[1]);
+				element.setVariableValue(comp[0], value);
+				System.out.println(comp[0] + " = " + element.getVariableValue(comp[0]));
+			} else if(valueText.matches("^[\\d\\.]+$")){
+				double value = Double.valueOf(valueText);
+				element.setVariableValue(value);
+				System.out.println("Value for "+ formName + " set to " + value);
+			}
+			
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 //	private boolean reuseAvailable(String text){
 //		StringTokenizer tokenizer = new StringTokenizer(text, "+-/^()*", true);
 //		String prevToken = "";
@@ -195,10 +260,15 @@ public class MainWindow {
 //	}
 	
 	private void printStoredFormulas(){
-		for (Map.Entry<String, String> entry : storage.getStoredFormulas().entrySet()) {
+//		for (Map.Entry<String, String> entry : storage.getStoredFormulas().entrySet()) {
+//		    String key = entry.getKey();
+//		    Object value = entry.getValue();
+//		    System.out.println("name: " + key + " formula: " + value);
+//		}
+		for (Map.Entry<String, FormulaElement> entry : storage.getStoredFormulas().entrySet()) {
 		    String key = entry.getKey();
 		    Object value = entry.getValue();
-		    System.out.println("name: " + key + " formula: " + value);
+		    System.out.println("name: " + key + " formula: " + value.toString());
 		}
 	}
 }
