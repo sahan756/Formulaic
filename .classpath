@@ -3,5 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="ext/JTattoo-1.6.9.jar"/>
+	<classpathentry kind="lib" path="C:/Users/krytor/Documents/GitHub/Formulaic/ext/jfreechart-1.0.14/jfreechart-1.0.14-demo.jar"/>
+	<classpathentry kind="lib" path="C:/Users/krytor/Documents/GitHub/Formulaic/ext/jcommon-1.0.23/jcommon-1.0.23.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
