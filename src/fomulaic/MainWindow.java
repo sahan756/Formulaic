@@ -15,6 +15,7 @@ import java.awt.GridLayout;
 
 import javax.swing.JTextField;
 
+import formulator.ComplexFormulaElement;
 import formulator.FormulaElement;
 
 import java.awt.GridBagLayout;
@@ -27,6 +28,7 @@ import javax.swing.JScrollBar;
 
 import java.awt.ScrollPane;
 import java.text.Normalizer.Form;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -34,6 +36,10 @@ import java.util.Vector;
 import javax.swing.JScrollPane;
 
 //import jdk.nashorn.internal.scripts.JO;
+
+
+
+
 
 
 
@@ -160,8 +166,10 @@ public class MainWindow {
 			}
 
 			if (addFormula) {
-				storage.addFormula(comps[0],
-						FormulaElement.parseFormula(comps[1]));
+//				storage.addFormula(comps[0],
+//						FormulaElement.parseFormula(comps[1]));
+				ComplexFormulaElement formula = new ComplexFormulaElement(comps[0], storage.getStoredFormulas());
+				storage.addFormula(comps[0], formula.parseComplexFormula(comps[1]));
 				textArea.append(textField.getText() + "\n");
 			}
 		} else if(text.matches("^eval\\s[a-zA-Z]$")){

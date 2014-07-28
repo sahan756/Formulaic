@@ -46,6 +46,15 @@ public class FunctionElement extends FormulaElement{
 		}
 	}
 	
+//	public void setVariableValue(FormulaElement value) {
+//		Vector<FormulaElement> args = this.getArgList();
+//		for (FormulaElement element : args) {
+//			if(!(element instanceof ConstantElement)){
+//				element.setVariableValue(value);
+//			}
+//		}
+//	}
+	
 	public double getVariableValue(String varName) {
 		Vector<FormulaElement> args = this.getArgList();
 		for (FormulaElement element : args) {
@@ -68,4 +77,5 @@ public class FunctionElement extends FormulaElement{
 		}
 		return true;
 	}
+	
 }

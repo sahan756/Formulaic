@@ -9,4 +9,5 @@ public class PowerFunctionElement extends FunctionElement {
 	public double evaluate(){
 		return Math.pow(getArg(0).evaluate(), getArg(1).evaluate());
 	}
+
 }

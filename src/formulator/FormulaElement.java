@@ -21,6 +21,10 @@ public class FormulaElement {
 		this.setVariableValue(value);
 	}
 	
+//	public void setVariableValue(FormulaElement value) {
+//		this.setVariableValue(value);
+//	}
+	
 	public double getVariableValue(String varName) {
 		return this.getVariableValue(varName);
 	}
@@ -373,6 +377,5 @@ public class FormulaElement {
 		}
 		return pass6;
 	}
-	
 	
 }

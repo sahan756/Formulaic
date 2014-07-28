@@ -28,4 +28,5 @@ public class MinusFunctionElement extends FunctionElement {
 	public double evaluate(){
 		return getArg(0).evaluate() - getArg(1).evaluate();
 	}
+
 }

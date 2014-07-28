@@ -25,4 +25,5 @@ public class PlusFunctionElement extends FunctionElement{
 	public double evaluate(){
 		return getArg(0).evaluate() + getArg(1).evaluate();
 	}
+	
 }
