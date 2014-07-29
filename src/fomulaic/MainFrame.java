@@ -34,9 +34,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.Component;
+import java.beans.XMLEncoder;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -46,7 +49,6 @@ import java.util.logging.Level;
 import javax.swing.AbstractListModel;
 import javax.swing.DropMode;
 
-import com.sun.istack.internal.logging.Logger;
 
 
 public class MainFrame extends JFrame implements ActionListener {
@@ -670,7 +672,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {	
 				JFileChooser fileChooser = new JFileChooser();
-		        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Plain Text File", "txt"));
+		    //    fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Plain Text File", "txt"));
 		        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("XML Text File", "XML"));
 		        fileChooser.setAcceptAllFileFilterUsed(true);
 		        int result = fileChooser.showSaveDialog(frame);
@@ -678,9 +680,20 @@ public class MainFrame extends JFrame implements ActionListener {
 		           return ;
 		        }
 		        
-		        File fn = new File(fileChooser.getSelectedFile() + ".txt");
+		 //       File fn = new File(fileChooser.getSelectedFile() + ".txt");
 		        File fn1 = new File(fileChooser.getSelectedFile() + ".xml");
-		        BufferedWriter bw = null;
+		        
+		        XMLEncoder en = null;
+				try {
+					en = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(fn1)));
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+                en.writeObject(textArea);
+                en.close();
+		        
+     /*   BufferedWriter bw = null;
 		        try {
 		        	
 		           bw = new BufferedWriter(new FileWriter(fn));
@@ -695,7 +708,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		                 bw.close();
 		              } catch (IOException ex) {}
 		           }
-		        }
+		        }*/
 		      } 
 		});
 
