@@ -150,6 +150,7 @@ public class MainWindow {
 													// or digit other than '='
 			String[] comps = text.split("=");
 			// FormulaElement formula = FormulaElement.parseFormula(comps[1]);
+			comps[0] = comps[0].replaceAll("\\s", "");
 			if (storage.getStoredFormulas().containsKey(comps[0])) {
 				String message = "There's already a formula assigned to '"
 						+ comps[0] + "'.\nWould you like to replace?";
@@ -175,10 +176,15 @@ public class MainWindow {
 		} else if(text.matches("^eval\\s[a-zA-Z]$")){
 			String[] comps = text.split("\\s");
 			FormulaElement elem = storage.getStoredFormulas().get(comps[1]);
-			if(elem.isFullyGrounded())
-				textArea.append(comps[1] + " = " + elem.evaluate() + "\n");
-			else{
-				textField.setText("Not grounded");
+			if (elem != null) {
+				if (elem.isFullyGrounded())
+					textArea.append(comps[1] + " = " + elem.evaluate() + "\n");
+				else {
+					textField.setText("Not grounded");
+					return false;
+				}
+			} else {
+				textField.setText("Formula not found");
 				return false;
 			}
 		} else {
@@ -205,20 +211,31 @@ public class MainWindow {
 				// formulaText += token;
 				// }
 
-				if (token.matches("\\(") && prevToken.matches("\\w")
-						&& prevToken.length() == 1 && i == 2) {
-					if (storage.getStoredFormulas().containsKey(prevToken)) {
-						// level++;
-						appendValue = true;
-						varName = prevToken;
+				if (token.matches("\\(")) {
+					level++;
+					if (level == 1) {
+						if (prevToken.matches("\\w")
+								&& prevToken.length() == 1
+								&& i == 2
+								&& storage.getStoredFormulas().containsKey(prevToken)) {
+							appendValue = true;
+							varName = prevToken;
+						}
+					} else {
+						varValueText += token;
 					}
 				} else if (appendValue) {
 					if (token.matches("\\)")) {
-						assignVariableValue(varName, varValueText);
-						appendValue = false;
-						varValueText = "";
+						level--;
+						if(level == 0){
+							assignVariableValue(varName, varValueText);
+							appendValue = false;
+							varValueText = "";
+						} else {
+							varValueText += token;
+						}
 					} else if (token.matches("^[a-zA-Z]$")
-							&& varValueText.length() > 0) {
+							&& varValueText.length() > 0 && !prevToken.matches("=")) {
 						assignVariableValue(varName, varValueText);
 						// varName = token;
 						varValueText = token;
@@ -262,13 +279,18 @@ public class MainWindow {
 	private void assignVariableValue(String formName, String valueText){
 		try {
 			FormulaElement element = storage.getStoredFormulas().get(formName);
-			if(valueText.matches("^\\w=[\\d\\.]+$")){
+			ComplexFormulaElement form= new ComplexFormulaElement(storage.getStoredFormulas());
+			//if(valueText.matches("^\\w=[\\d\\.]+$")){
+			if(valueText.matches("^\\w=.+$")){
 				String[] comp = valueText.split("=");
-				double value = Double.valueOf(comp[1]);
+				//double value = Double.valueOf(comp[1]);
+				double value = form.parseComplexFormula(comp[1]).evaluate();
 				element.setVariableValue(comp[0], value);
 				System.out.println(comp[0] + " = " + element.getVariableValue(comp[0]));
-			} else if(valueText.matches("^[\\d\\.]+$")){
-				double value = Double.valueOf(valueText);
+			//} else if(valueText.matches("^[\\d\\.]+$")){
+			} else {
+				//double value = Double.valueOf(valueText);
+				double value = form.parseComplexFormula(valueText).evaluate();
 				element.setVariableValue(value);
 				System.out.println("Value for "+ formName + " set to " + value);
 			}

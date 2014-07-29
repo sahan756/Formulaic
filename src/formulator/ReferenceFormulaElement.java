@@ -8,14 +8,15 @@ public class ReferenceFormulaElement extends FormulaElement{
 	private FormulaElement assignValue;
 	//private HashMap<String, FormulaElement> storedFormulas;
 	
-	public ReferenceFormulaElement (String formulaName, ComplexFormulaElement formula, FormulaElement assignValue){
+	public ReferenceFormulaElement (String formulaName, FormulaElement formula, FormulaElement assignValue){
 		this.formulaName = formulaName;
 		//this.formula = formula;
 		//To make a copy of Formula element.
 		//this.formula = FormulaElement.parseFormula(formula.toString());
-		this.formula = formula.parseComplexFormula(formula.getStoredFormula(formulaName).toString());
+		ComplexFormulaElement complexFormula = (ComplexFormulaElement)formula;
+		this.formula = complexFormula.parseComplexFormula(complexFormula.getStoredFormula(formulaName).toString());
 		this.assignValue = assignValue;
-		if(assignValue instanceof ConstantElement) this.formula.setVariableValue(assignValue.evaluate());
+		if(assignValue instanceof ConstantElement || assignValue.isFullyGrounded()) this.formula.setVariableValue(assignValue.evaluate());
 	}
 	
 	@Override

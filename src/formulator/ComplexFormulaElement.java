@@ -10,6 +10,11 @@ public class ComplexFormulaElement extends FormulaElement{
 	private HashMap<String, FormulaElement> storedFormulas;
 	private String formulaName;
 	
+	public ComplexFormulaElement(HashMap<String, FormulaElement> storedFormulas){
+		this.storedFormulas = storedFormulas;
+		//parseComplexFormula(text);
+	}
+	
 	public ComplexFormulaElement(String formulaName,HashMap<String, FormulaElement> storedFormulas){
 		this.formulaName = formulaName;
 		this.storedFormulas = storedFormulas;
@@ -100,8 +105,11 @@ public class ComplexFormulaElement extends FormulaElement{
 						FormulaElement formula = storedFormulas
 								.get(formulaName);
 						if (formula != null) {
-							FormulaElement assign = (FormulaElement) parseElements(
-									subElements).get(0);
+							FormulaElement assign = null;
+							ComplexFormulaElement c = new ComplexFormulaElement(storedFormulas);
+							assign = (FormulaElement)c.parseReferredFormulas(subElements).get(0);
+							//FormulaElement assign = (FormulaElement) parseElements(subElements).get(0);
+
 							ReferenceFormulaElement ref = new ReferenceFormulaElement(
 									formulaName, this, assign);
 							elements.add(ref);
