@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
@@ -30,11 +31,23 @@ import javax.swing.UIManager;
 import javax.swing.JTextArea;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.Component;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.File;
+import java.util.logging.Level;
 
 import javax.swing.AbstractListModel;
 import javax.swing.DropMode;
+
+import com.sun.istack.internal.logging.Logger;
+
 
 public class MainFrame extends JFrame implements ActionListener {
 
@@ -56,6 +69,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JTextField textField_14;
 	private JTextField textField_15;
 	private JTextField textField_16;
+	private JFrame frame;
+	 File file;
 	
 	JList list_1;
     DefaultListModel listModel;
@@ -626,9 +641,67 @@ public class MainFrame extends JFrame implements ActionListener {
 		btnLoad_1.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		btnLoad_1.setBounds(215, 65, 63, 23);
 		panel_5.add(btnLoad_1);
+	
 		
+		btnLoad.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				final JFileChooser fc = new JFileChooser(); 
+	            int returnVal = fc.showOpenDialog(frame);
+	            if (returnVal == JFileChooser.APPROVE_OPTION) {
+	                file = fc.getSelectedFile();
+	                FileReader reader;
+	                System.out.println(textArea.getText());
+					try {
+						String text;
+						reader = new FileReader(file);
+						BufferedReader br = new BufferedReader(reader);
+						while ((text = br.readLine()) != null){
+							textArea.append(text);
+						}
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+	            } 
+			}
+		});
+		
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {	
+				JFileChooser fileChooser = new JFileChooser();
+		        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Plain Text File", "txt"));
+		        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("XML Text File", "XML"));
+		        fileChooser.setAcceptAllFileFilterUsed(true);
+		        int result = fileChooser.showSaveDialog(frame);
+		        if (result != JFileChooser.APPROVE_OPTION) {
+		           return ;
+		        }
+		        
+		        File fn = new File(fileChooser.getSelectedFile() + ".txt");
+		        File fn1 = new File(fileChooser.getSelectedFile() + ".xml");
+		        BufferedWriter bw = null;
+		        try {
+		        	
+		           bw = new BufferedWriter(new FileWriter(fn));
+		           bw = new BufferedWriter(new FileWriter(fn1));
+		           textArea.write(bw); 
+
+		        } catch (IOException ex) {
+		               ex.printStackTrace();
+		        } finally {
+		           if (bw != null) {
+		              try {
+		                 bw.close();
+		              } catch (IOException ex) {}
+		           }
+		        }
+		      } 
+		});
 
 	}
+	
+	
 
 	public void actionPerformed(ActionEvent e) {
 		
