@@ -97,7 +97,6 @@ public class MainFrame extends JFrame implements ActionListener {
 	JButton button_eq= new JButton("=");
 	JButton button_sin = new JButton("Sin");
 	JButton button_Cos = new JButton("cos");
-	JButton button_Tan = new JButton("tan");	
 	JButton button_plus = new JButton("+");
 	JButton button_minus = new JButton("-");	
 	JButton button_mul = new JButton("*");
@@ -184,7 +183,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		contentPane.setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(10, 11, 337, 112);
+		panel.setBounds(10, 11, 337, 119);
 		panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		contentPane.add(panel);
 		panel.setLayout(null);
@@ -293,10 +292,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		button_Cos.setBounds(170, 48, 55, 23);
 		panel_1.add(button_Cos);
 		
-		button_Tan.addActionListener(this);
-		button_Tan.setBounds(170, 84, 55, 23);
-		panel_1.add(button_Tan);
-		
 		button_plus.addActionListener(this);
 		button_plus.setBounds(235, 12, 41, 25);
 		panel_1.add(button_plus);
@@ -322,7 +317,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		panel_1.add(button_cloBr);
 		
 		button_power.addActionListener(this);
-		button_power.setBounds(170, 120, 55, 23);
+		button_power.setBounds(170, 84, 55, 23);
 		panel_1.add(button_power);
 		
 		btnX.addActionListener(this);
@@ -384,7 +379,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		panel_1.add(btnN);
 		
 		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(357, 11, 297, 112);
+		panel_2.setBounds(357, 11, 297, 119);
 		panel_2.setName("");
 		panel_2.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		contentPane.add(panel_2);
@@ -398,6 +393,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		listModel = new DefaultListModel<String>();
 		list_1 = new JList<String>(listModel);
+		list_1.setVisibleRowCount(5);
 		 pane = new JScrollPane(list_1);
 		 pane.setViewportView(list_1);
 		 
@@ -425,30 +421,35 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		
 		JPanel panel_6 = new JPanel();
-		panel_6.setBounds(189, 11, 98, 90);
+		panel_6.setBounds(160, 26, 127, 68);
 		panel_2.add(panel_6);
 		panel_6.setLayout(null);
 		
-		JButton btnEdit = new JButton("Edit");
-		btnEdit.setBounds(10, 67, 78, 23);
-		panel_6.add(btnEdit);
+		JScrollPane scrollPane = new JScrollPane((Component) null);
+		scrollPane.setBounds(0, 0, 127, 68);
+		panel_6.add(scrollPane);
 		
-		JButton btnUse = new JButton("Use");
-		btnUse.setBounds(10, 33, 78, 23);
-		panel_6.add(btnUse);
-		
-		btnUse.setActionCommand(KeyValues.COMMAND_USE_FORMULA);
-		btnUse.addActionListener(controller);
-		
-			JButton btnNew = new JButton("New");
-			btnNew.setBounds(10, -1, 78, 23);
-			panel_6.add(btnNew);
+		JList list = new JList();
+		scrollPane.setRowHeaderView(list);
 			
 			JPanel panel_7 = new JPanel();
-			panel_7.setBounds(10, 21, 180, 80);
+			panel_7.setBounds(10, 26, 140, 68);
 			panel_2.add(panel_7);
 			panel_7.setLayout(new BorderLayout(0, 0));
 			panel_7.add(pane);
+			
+			JButton btnUse = new JButton("Use");
+			btnUse.setBounds(10, 99, 63, 20);
+			panel_2.add(btnUse);
+			
+			btnUse.setActionCommand(KeyValues.COMMAND_USE_FORMULA);
+			
+			JLabel lblOperationHistory = new JLabel("Operation History");
+			lblOperationHistory.setForeground(Color.YELLOW);
+			lblOperationHistory.setFont(new Font("Cambria", Font.BOLD | Font.ITALIC, 11));
+			lblOperationHistory.setBounds(160, 0, 94, 19);
+			panel_2.add(lblOperationHistory);
+			btnUse.addActionListener(controller);
 
  
    /*     //Create the list and put it in a scroll pane.
@@ -608,20 +609,20 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		textField_15 = new JTextField();
 		textField_15.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		textField_15.setBounds(132, 36, 195, 20);
+		textField_15.setBounds(142, 36, 185, 20);
 		textField_15.setColumns(10);
 		panel_4.add(textField_15);
 		
 		textField_14 = new JTextField();
 		textField_14.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		textField_14.setBounds(132, 67, 195, 20);
+		textField_14.setBounds(142, 67, 185, 20);
 		panel_4.add(textField_14);
 		textField_14.setColumns(10);
 		
 		textField_16 = new JTextField();
 		textField_16.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		textField_16.setColumns(10);
-		textField_16.setBounds(132, 11, 195, 20);
+		textField_16.setBounds(142, 11, 185, 20);
 		panel_4.add(textField_16);
 		
 		JLabel lblNdDerivative = new JLabel("2 nd Derivative");
@@ -659,7 +660,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		JCheckBox chckbxStDerivative = new JCheckBox("1 st Derivative");
 		chckbxStDerivative.setForeground(Color.ORANGE);
 		chckbxStDerivative.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 12));
-		chckbxStDerivative.setBounds(6, 8, 147, 23);
+		chckbxStDerivative.setBounds(6, 8, 130, 23);
 		panel_5.add(chckbxStDerivative);
 		
 		JCheckBox chckbxNdDerivative = new JCheckBox("2 nd Derivative");
