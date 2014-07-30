@@ -55,6 +55,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 
+
+
 public class MainFrame extends JFrame implements ActionListener {
 
 	private JPanel contentPane;
@@ -736,6 +738,50 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 		});
 		
+
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {	
+				JFileChooser fileChooser = new JFileChooser();
+		    //    fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Plain Text File", "txt"));
+		        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("XML Text File", "XML"));
+		        fileChooser.setAcceptAllFileFilterUsed(true);
+		        int result = fileChooser.showSaveDialog(frame);
+		        if (result != JFileChooser.APPROVE_OPTION) {
+		           return ;
+		        }
+		        
+		 //       File fn = new File(fileChooser.getSelectedFile() + ".txt");
+		        File fn1 = new File(fileChooser.getSelectedFile() + ".xml");
+		        
+		        XMLEncoder en = null;
+				try {
+					en = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(fn1)));
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+                en.writeObject(textArea);
+                en.close();
+		        
+     /*   BufferedWriter bw = null;
+		        try {
+		        	
+		           bw = new BufferedWriter(new FileWriter(fn));
+		           bw = new BufferedWriter(new FileWriter(fn1));
+		           textArea.write(bw); 
+
+		        } catch (IOException ex) {
+		               ex.printStackTrace();
+		        } finally {
+		           if (bw != null) {
+		              try {
+		                 bw.close();
+		              } catch (IOException ex) {}
+		           }
+		        }*/
+		      } 
+		});
+
 
 		btnSave.setActionCommand(KeyValues.COMMAND_SAVE_FORMULA);
 		btnSave.addActionListener(controller);
