@@ -2,10 +2,13 @@ package controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.XMLEncoder;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -126,37 +129,59 @@ public class MainFrameController implements ActionListener{
 	}
 	
 	private void saveFormulaToFile() {
+//		JFileChooser fileChooser = new JFileChooser();
+//		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter(
+//				"Plain Text File", "txt"));
+//		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter(
+//				"XML Text File", "XML"));
+//		fileChooser.setAcceptAllFileFilterUsed(true);
+//		int result = fileChooser.showSaveDialog(mainFrame);
+//		if (result != JFileChooser.APPROVE_OPTION) {
+//			return;
+//		}
+//
+//		File fn = new File(fileChooser.getSelectedFile() + ".txt");
+//		File fn1 = new File(fileChooser.getSelectedFile() + ".xml");
+//		BufferedWriter bw = null;
+//		try {
+//
+//			bw = new BufferedWriter(new FileWriter(fn));
+//			bw = new BufferedWriter(new FileWriter(fn1));
+//			textArea.write(bw);
+//			System.out.println(textArea.getText());
+//
+//		} catch (IOException ex) {
+//			ex.printStackTrace();
+//		} finally {
+//			if (bw != null) {
+//				try {
+//					bw.close();
+//				} catch (IOException ex) {
+//				}
+//			}
+//		}
+		
 		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter(
-				"Plain Text File", "txt"));
-		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter(
-				"XML Text File", "XML"));
-		fileChooser.setAcceptAllFileFilterUsed(true);
-		int result = fileChooser.showSaveDialog(mainFrame);
-		if (result != JFileChooser.APPROVE_OPTION) {
-			return;
-		}
-
-		File fn = new File(fileChooser.getSelectedFile() + ".txt");
-		File fn1 = new File(fileChooser.getSelectedFile() + ".xml");
-		BufferedWriter bw = null;
-		try {
-
-			bw = new BufferedWriter(new FileWriter(fn));
-			bw = new BufferedWriter(new FileWriter(fn1));
-			textArea.write(bw);
-			System.out.println(textArea.getText());
-
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} finally {
-			if (bw != null) {
-				try {
-					bw.close();
-				} catch (IOException ex) {
-				}
+	    //    fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Plain Text File", "txt"));
+	        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("XML Text File", "XML"));
+	        fileChooser.setAcceptAllFileFilterUsed(true);
+	        int result = fileChooser.showSaveDialog(mainFrame);
+	        if (result != JFileChooser.APPROVE_OPTION) {
+	           return ;
+	        }
+	        
+	 //       File fn = new File(fileChooser.getSelectedFile() + ".txt");
+	        File fn1 = new File(fileChooser.getSelectedFile() + ".xml");
+	        
+	        XMLEncoder en = null;
+			try {
+				en = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(fn1)));
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-		}
+            en.writeObject(storage.getStoredFormulas().get("f"));
+            en.close();
 	}
 	
 	private void loadFormulaFromFile(){

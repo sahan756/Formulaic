@@ -1,5 +1,9 @@
 package formulator;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 public class PlusFunctionElement extends FunctionElement{
 	@Override
 	public String toString(){
@@ -26,4 +30,23 @@ public class PlusFunctionElement extends FunctionElement{
 		return getArg(0).evaluate() + getArg(1).evaluate();
 	}
 	
+//	private void writeObject(ObjectOutputStream os) {
+//		try {
+//			System.out.println("Starting writeObject");
+//			os.defaultWriteObject();
+//			os.writeInt(cObj.getCollarSize());
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
+//	}
+//
+//	private void readObject(ObjectInputStream is) {
+//		try {
+//			System.out.println("Starting readObject");
+//			is.defaultReadObject();
+//			cObj = new Collar(is.readInt());
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
+//	}
 }

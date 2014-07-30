@@ -1,10 +1,11 @@
 package formulator;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-public class FormulaElement {
+public class FormulaElement implements Serializable{
 	Vector<VariableElement> variableList;
 //	protected String type;
 //	public String getType(){
