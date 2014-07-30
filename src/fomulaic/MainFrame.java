@@ -34,9 +34,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.Component;
+import java.beans.XMLEncoder;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -46,13 +49,15 @@ import java.util.logging.Level;
 import javax.swing.AbstractListModel;
 import javax.swing.DropMode;
 
-import com.sun.istack.internal.logging.Logger;
+
+import controllers.MainFrameController;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 
 public class MainFrame extends JFrame implements ActionListener {
 
 	private JPanel contentPane;
-	JTextArea textArea = new JTextArea();
 	private JTextField textField_1;
 	private JTextField textField_2;
 	private JTextField textField_3;
@@ -72,8 +77,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JFrame frame;
 	 File file;
 	
-	JList list_1;
-    DefaultListModel listModel;
+	JList<String> list_1;
+    DefaultListModel<String> listModel;
     JScrollPane pane;
 	
 	JButton button_1 = new JButton("1");
@@ -111,6 +116,22 @@ public class MainFrame extends JFrame implements ActionListener {
 	JButton btnM = new JButton("M");
 	JButton btnN = new JButton("N");	
 	
+	MainFrameController controller;
+	JTextField textArea;
+	
+	//Allow acces textArea to the controller
+	public JTextField getTextArea() {
+		return textArea;
+	}
+	
+	public JTextField getResultField(){
+		return textField_1;
+	}
+	
+	public DefaultListModel<String> getFormulaListModel(){
+		return listModel;
+	}
+	
 	/**
 	 * Launch the application.
 	 */
@@ -125,6 +146,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		//	UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");	
 		
             new MainWindow();
+            
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -135,6 +157,7 @@ public class MainFrame extends JFrame implements ActionListener {
 					MainFrame frame = new MainFrame();
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					frame.setVisible(true);
+					
 			}
 		});
 	}
@@ -143,6 +166,13 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * Create the frame.
 	 */
 	public MainFrame() {
+		
+//		//set controller
+//		controller = new MainFrameController(this);
+		//set controller
+      	controller = new MainFrameController();
+        
+      	
 		setTitle("Fromulaic");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 680, 528);
@@ -160,7 +190,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		JLabel lblFormula = new JLabel("Formula ");
 		lblFormula.setForeground(Color.YELLOW);
 		lblFormula.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 12));
-		lblFormula.setBounds(10, 14, 54, 14);
+		lblFormula.setBounds(10, 14, 64, 14);
 		panel.add(lblFormula);
 		
 		JLabel lblResult = new JLabel("Result ");
@@ -172,7 +202,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		textField_1 = new JTextField();
 		textField_1.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		textField_1.setColumns(10);
-		textField_1.setBounds(61, 39, 266, 27);
+		textField_1.setBounds(81, 39, 246, 27);
 		panel.add(textField_1);
 		
 		JButton btnLoad = new JButton("Load");
@@ -195,13 +225,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		btnEvaluate.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		btnEvaluate.setBounds(20, 77, 85, 23);
 		panel.add(btnEvaluate);
-		textArea.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		textArea.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		
-		
-		textArea.setBounds(61, 10, 266, 27);
-		textArea.setAlignmentX(CENTER_ALIGNMENT);
-		panel.add(textArea);
+		btnEvaluate.setActionCommand(KeyValues.COMMAND_EVAL_INPUT);
+		btnEvaluate.addActionListener(controller);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(10, 238, 337, 243);
@@ -368,15 +394,26 @@ public class MainFrame extends JFrame implements ActionListener {
 		lblFormulaList.setBounds(10, 0, 70, 19);
 		panel_2.add(lblFormulaList);
 		
-		listModel = new DefaultListModel();
-		list_1 = new JList(listModel);
+		listModel = new DefaultListModel<String>();
+		list_1 = new JList<String>(listModel);
 		 pane = new JScrollPane(list_1);
 		 pane.setViewportView(list_1);
-        listModel.addElement("3X + 2Y");
-        listModel.addElement("4Y - 52");
-        listModel.addElement("5k -20 + C");
-		
-		
+		 
+		 controller.setFormulaJList(list_1);
+		 controller.setFomulaListModel(listModel);
+		 
+//        listModel.addElement("3X + 2Y");
+//        listModel.addElement("4Y - 52");
+//        listModel.addElement("5k -20 + C");
+//        listModel.addElement("5k -20 + C");
+//        listModel.addElement("5k -20 + C");
+//        listModel.addElement("5k -20 + C");
+//        listModel.addElement("5k -20 + C");
+//        listModel.addElement("5k -20 + C");
+//        listModel.addElement("5k -20 + C");
+
+        
+      
 	/*	list_1.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
         list_1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list_1.setSelectedIndex(0);
@@ -397,6 +434,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		JButton btnUse = new JButton("Use");
 		btnUse.setBounds(10, 33, 78, 23);
 		panel_6.add(btnUse);
+		
+		btnUse.setActionCommand(KeyValues.COMMAND_USE_FORMULA);
+		btnUse.addActionListener(controller);
 		
 			JButton btnNew = new JButton("New");
 			btnNew.setBounds(10, -1, 78, 23);
@@ -641,64 +681,146 @@ public class MainFrame extends JFrame implements ActionListener {
 		btnLoad_1.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		btnLoad_1.setBounds(215, 65, 63, 23);
 		panel_5.add(btnLoad_1);
-	
 		
-		btnLoad.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				final JFileChooser fc = new JFileChooser(); 
-	            int returnVal = fc.showOpenDialog(frame);
-	            if (returnVal == JFileChooser.APPROVE_OPTION) {
-	                file = fc.getSelectedFile();
-	                FileReader reader;
-	                System.out.println(textArea.getText());
-					try {
-						String text;
-						reader = new FileReader(file);
-						BufferedReader br = new BufferedReader(reader);
-						while ((text = br.readLine()) != null){
-							textArea.append(text);
-						}
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
+		
+		
+	
+		btnLoad.setActionCommand(KeyValues.COMMAND_LOAD_FORMULA);
+		btnLoad.addActionListener(controller);
+//		btnLoad.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent arg0) {
+//				final JFileChooser fc = new JFileChooser(); 
+//	            int returnVal = fc.showOpenDialog(frame);
+//	            if (returnVal == JFileChooser.APPROVE_OPTION) {
+//	                file = fc.getSelectedFile();
+//	                FileReader reader;
+//	                System.out.println(textArea.getText());
+//					try {
+//						String text;
+//						reader = new FileReader(file);
+//						BufferedReader br = new BufferedReader(reader);
+//						while ((text = br.readLine()) != null){
+//							textArea.append(text);
+//						}
+//					} catch (FileNotFoundException e) {
+//						e.printStackTrace();
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//	            } 
+//			}
+//		});
+		
+		
+		
+		textArea = new JTextField();
+		textArea.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
+		textArea.setBounds(81, 7, 246, 28);
+		panel.add(textArea);
+		textArea.setColumns(10);
+		
+		textArea.addActionListener(controller);
+		//textArea.setActionCommand(KeyValues.COMMAND_EVAL_INPUT);
+		
+		textArea.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER){
+					for(ActionListener a: textArea.getActionListeners()) {
+					    a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, KeyValues.COMMAND_EVAL_INPUT) {
+					          //Nothing need go here, the actionPerformed method (with the
+					          //above arguments) will trigger the respective listener
+					    });
 					}
-	            } 
+				}
 			}
 		});
 		
-		btnSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {	
-				JFileChooser fileChooser = new JFileChooser();
-		        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Plain Text File", "txt"));
-		        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("XML Text File", "XML"));
-		        fileChooser.setAcceptAllFileFilterUsed(true);
-		        int result = fileChooser.showSaveDialog(frame);
-		        if (result != JFileChooser.APPROVE_OPTION) {
-		           return ;
-		        }
-		        
-		        File fn = new File(fileChooser.getSelectedFile() + ".txt");
-		        File fn1 = new File(fileChooser.getSelectedFile() + ".xml");
-		        BufferedWriter bw = null;
-		        try {
-		        	
-		           bw = new BufferedWriter(new FileWriter(fn));
-		           bw = new BufferedWriter(new FileWriter(fn1));
-		           textArea.write(bw); 
 
-		        } catch (IOException ex) {
-		               ex.printStackTrace();
-		        } finally {
-		           if (bw != null) {
-		              try {
-		                 bw.close();
-		              } catch (IOException ex) {}
-		           }
-		        }
-		      } 
-		});
-
+		btnSave.setActionCommand(KeyValues.COMMAND_SAVE_FORMULA);
+		btnSave.addActionListener(controller);
+		
+		//add components to controller
+		controller.setMainFrame(this);
+		controller.setResultField(textField_1);
+		controller.setTextArea(textArea);
+		
+//		btnSave.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {	
+//				JFileChooser fileChooser = new JFileChooser();
+//		        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Plain Text File", "txt"));
+//		        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("XML Text File", "XML"));
+//		        fileChooser.setAcceptAllFileFilterUsed(true);
+//		        int result = fileChooser.showSaveDialog(frame);
+//		        if (result != JFileChooser.APPROVE_OPTION) {
+//		           return ;
+//		        }
+//		        
+//		        File fn = new File(fileChooser.getSelectedFile() + ".txt");
+//		        File fn1 = new File(fileChooser.getSelectedFile() + ".xml");
+//		        BufferedWriter bw = null;
+//		        try {
+//		        	
+//		           bw = new BufferedWriter(new FileWriter(fn));
+//		           bw = new BufferedWriter(new FileWriter(fn1));
+//		           textArea.write(bw); 
+//
+//		        } catch (IOException ex) {
+//		               ex.printStackTrace();
+//		        } finally {
+//		           if (bw != null) {
+//		              try {
+//		                 bw.close();
+//		              } catch (IOException ex) {}
+//		           }
+//		        }
+//		      } 
+//		});
+		
+//		btnSave.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {	
+//				JFileChooser fileChooser = new JFileChooser();
+//		    //    fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Plain Text File", "txt"));
+//		        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("XML Text File", "XML"));
+//		        fileChooser.setAcceptAllFileFilterUsed(true);
+//		        int result = fileChooser.showSaveDialog(frame);
+//		        if (result != JFileChooser.APPROVE_OPTION) {
+//		           return ;
+//		        }
+//		        
+//		 //       File fn = new File(fileChooser.getSelectedFile() + ".txt");
+//		        File fn1 = new File(fileChooser.getSelectedFile() + ".xml");
+//		        
+//		        XMLEncoder en = null;
+//				try {
+//					en = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(fn1)));
+//				} catch (FileNotFoundException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//                en.writeObject(textArea);
+//                en.close();
+//		        
+//     /*   BufferedWriter bw = null;
+//		        try {
+//		        	
+//		           bw = new BufferedWriter(new FileWriter(fn));
+//		           bw = new BufferedWriter(new FileWriter(fn1));
+//		           textArea.write(bw); 
+//
+//		        } catch (IOException ex) {
+//		               ex.printStackTrace();
+//		        } finally {
+//		           if (bw != null) {
+//		              try {
+//		                 bw.close();
+//		              } catch (IOException ex) {}
+//		           }
+//		        }*/
+//		      } 
+//		});
+//
+//
 	}
 	
 	
@@ -708,106 +830,140 @@ public class MainFrame extends JFrame implements ActionListener {
 		Object source = e.getSource();
 		
 		if(source == button_0){
-			textArea.append("0");
+			//textArea.append("0");
+			textArea.setText(textArea.getText()+"0");
 		}
 		if(source == button_1){
-			textArea.append("1");
+			//textArea.append("1");
+			textArea.setText(textArea.getText()+"1");
 		}
 		if(source == button_2){
-			textArea.append("2");
+			//textArea.append("2");
+			textArea.setText(textArea.getText()+"2");
 		}
 		if(source == button_3){
-			textArea.append("3");
+			//textArea.append("3");
+			textArea.setText(textArea.getText()+"3");
 		}
 		if(source == button_4){
-			textArea.append("4");
+			//textArea.append("4");
+			textArea.setText(textArea.getText()+"4");
 		}
 		if(source == button_5){
-			textArea.append("5");
+			//textArea.append("5");
+			textArea.setText(textArea.getText()+"5");
 		}
 		if(source == button_6){
-			textArea.append("6");
+			//textArea.append("6");
+			textArea.setText(textArea.getText()+"6");
 		}
 		if(source == button_7){
-			textArea.append("7");
+			//textArea.append("7");
+			textArea.setText(textArea.getText()+"7");
 		}
 		if(source == button_8){
-			textArea.append("8");
+			//textArea.append("8");
+			textArea.setText(textArea.getText()+"8");
 		}
 		if(source == button_9){
-			textArea.append("9");
+			//textArea.append("9");
+			textArea.setText(textArea.getText()+"9");
 		}
 		if(source == button_){
-			textArea.append(".");
+			//textArea.append(".");
+			textArea.setText(textArea.getText()+".");
 		}
 		if(source == button_eq){
-			textArea.append("=");
+			//textArea.append("=");
+			textArea.setText(textArea.getText()+"=");
 		}
 		if(source == button_sin){
-			textArea.append("sin");
+			//textArea.append("sin");
+			textArea.setText(textArea.getText()+"sin");
 		}
 		if(source == button_Cos){
-			textArea.append("cos");
+			//textArea.append("cos");
+			textArea.setText(textArea.getText()+"cos");
 		}
-		if(source == button_Tan){
-			textArea.append("tan");
-		}
+//		if(source == button_Tan){
+//			//textArea.append("tan");
+//			textArea.setText(textArea.getText()+"tan");
+//		}
 		if(source == button_minus){
-			textArea.append("-");
+			//textArea.append("-");
+			textArea.setText(textArea.getText()+"-");
 		}
 		if(source == button_mul){
-			textArea.append("*");
+			//textArea.append("*");
+			textArea.setText(textArea.getText()+"*");
 		}
 		if(source == button_dev){
-			textArea.append("/");
+			//textArea.append("/");
+			textArea.setText(textArea.getText()+"/");
 		}
 		if(source == button_opBr){
-			textArea.append("(");
+			//textArea.append("(");
+			textArea.setText(textArea.getText()+"(");
 		}
 		if(source == button_cloBr){
-			textArea.append(")");
+			//textArea.append(")");
+			textArea.setText(textArea.getText()+")");
 		}
 		if(source == button_power){
-			textArea.append("^");
+			//textArea.append("^");
+			textArea.setText(textArea.getText()+"^");
 		}
 		if(source == button_plus){
-			textArea.append("+");
+			//textArea.append("+");
+			textArea.setText(textArea.getText()+"+");
 		}
 		if(source == btnA){
-			textArea.append("A");
+			//textArea.append("A");
+			textArea.setText(textArea.getText()+"A");
 		}
 		if(source == btnB){
-			textArea.append("B");
+			//textArea.append("B");
+			textArea.setText(textArea.getText()+"B");
 		}
 		if(source == btnC){
-			textArea.append("C");
+			//textArea.append("C");
+			textArea.setText(textArea.getText()+"C");
 		}
 		if(source == btnX){
-			textArea.append("X");
+			//textArea.append("X");
+			textArea.setText(textArea.getText()+"X");
 		}
 		if(source == btnY){
-			textArea.append("Y");
+			//textArea.append("Y");
+			textArea.setText(textArea.getText()+"Y");
 		}
 		if(source == btnZ){
-			textArea.append("Z");
+			//textArea.append("Z");
+			textArea.setText(textArea.getText()+"Z");
 		}
 		if(source == btnI){
-			textArea.append("I");
+			//textArea.append("I");
+			textArea.setText(textArea.getText()+"I");
 		}
 		if(source == btnJ){
-			textArea.append("J");
+			//textArea.append("J");
+			textArea.setText(textArea.getText()+"J");
 		}
 		if(source == btnK){
-			textArea.append("K");
+			//textArea.append("K");
+			textArea.setText(textArea.getText()+"K");
 		}
 		if(source == btnL){
-			textArea.append("L");
+			//textArea.append("L");
+			textArea.setText(textArea.getText()+"L");
 		}
 		if(source == btnM){
-			textArea.append("M");
+			//textArea.append("M");
+			textArea.setText(textArea.getText()+"M");
 		}
 		if(source == btnN){
-			textArea.append("N");
+			//textArea.append("N");
+			textArea.setText(textArea.getText()+"N");
 		}
 		
 	}

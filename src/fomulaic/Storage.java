@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 //import com.sun.javafx.collections.MappingChange.Map;
 
+
+import models.GraphModel;
 import formulator.FormulaElement;
 
 public class Storage {
@@ -22,9 +24,11 @@ public class Storage {
 //		return storedFormulas;
 //	}
 	private HashMap<String, FormulaElement> storedFormulas;
+	private HashMap<String, GraphModel> graphList;
 	
 	public Storage(){
 		storedFormulas = new HashMap<String, FormulaElement>();
+		graphList = new HashMap<String, GraphModel>();
 	}
 	
 	public void addFormula(String name, FormulaElement formula){
@@ -33,5 +37,13 @@ public class Storage {
 	
 	public HashMap<String, FormulaElement> getStoredFormulas(){
 		return storedFormulas;
+	}
+	
+	public void addGraph(String name, GraphModel graph){
+		graphList.put(name, graph);
+	}
+	
+	public HashMap<String, GraphModel> getStoredGraphs(){
+		return graphList;
 	}
 }

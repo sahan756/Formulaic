@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.7.0" class="java.beans.XMLDecoder">
+ <object class="javax.swing.JTextArea">
+  <void property="bounds">
+   <object class="java.awt.Rectangle" id="Rectangle0">
+    <void class="java.awt.Rectangle" method="getField">
+     <string>x</string>
+     <void method="set">
+      <object idref="Rectangle0">
+       <void class="java.awt.Rectangle" method="getField">
+        <string>y</string>
+        <void method="set">
+         <object idref="Rectangle0">
+          <void class="java.awt.Rectangle" method="getField">
+           <string>width</string>
+           <void method="set">
+            <object idref="Rectangle0">
+             <void class="java.awt.Rectangle" method="getField">
+              <string>height</string>
+              <void method="set">
+               <object idref="Rectangle0"/>
+               <int>27</int>
+              </void>
+             </void>
+            </object>
+            <int>266</int>
+           </void>
+          </void>
+         </object>
+         <int>10</int>
+        </void>
+       </void>
+      </object>
+      <int>61</int>
+     </void>
+    </void>
+   </object>
+  </void>
+  <void property="border">
+   <object class="javax.swing.border.EtchedBorder">
+    <int>0</int>
+    <null/>
+    <null/>
+   </object>
+  </void>
+  <void property="text">
+   <string>dsgdsdg</string>
+  </void>
+ </object>
+</java>

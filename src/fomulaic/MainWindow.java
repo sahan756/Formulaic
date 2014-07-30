@@ -61,11 +61,11 @@ public class MainWindow {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-//		try{
-//			UIManager.setLookAndFeel("com.jtattoo.plaf.hifi.HiFiLookAndFeel");
-//		} catch(Exception e){
-//			e.printStackTrace();
-//		}
+		try{
+			UIManager.setLookAndFeel("com.jtattoo.plaf.hifi.HiFiLookAndFeel");
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -301,21 +301,7 @@ public class MainWindow {
 		}
 	}
 	
-//	private boolean reuseAvailable(String text){
-//		StringTokenizer tokenizer = new StringTokenizer(text, "+-/^()*", true);
-//		String prevToken = "";
-//		while(tokenizer.hasMoreTokens()){
-//			String token = tokenizer.nextToken();
-//			if(token.matches("(") && prev)
-//		}
-//	}
-	
 	private void printStoredFormulas(){
-//		for (Map.Entry<String, String> entry : storage.getStoredFormulas().entrySet()) {
-//		    String key = entry.getKey();
-//		    Object value = entry.getValue();
-//		    System.out.println("name: " + key + " formula: " + value);
-//		}
 		for (Map.Entry<String, FormulaElement> entry : storage.getStoredFormulas().entrySet()) {
 		    String key = entry.getKey();
 		    Object value = entry.getValue();

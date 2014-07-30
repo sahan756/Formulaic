@@ -5,10 +5,14 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 public class FormulaElement {
+	Vector<VariableElement> variableList;
 //	protected String type;
 //	public String getType(){
 //		return type;
 //	}
+//	double diffValue = 0.0000001;
+//	double firstDiff = 0;
+	
 	public String toString() {
 		return this.toString();
 	}
@@ -34,8 +38,19 @@ public class FormulaElement {
 	}
 	
 	public double evaluate(){
+//		double value = this.evaluate();
+//		this.firstDiff = this.evaluate(getVariableValue("x")+diffValue)-value;
+//		return value;
 		return this.evaluate();
 	}
+	
+	public Vector<VariableElement> getVariableList(){
+		return this.getVariableList();
+	}
+	
+//	public double getFirstDerivative(){
+//		return this.firstDiff;
+//	}
 	
 //	public static void main(String[] args) {
 ////		FormulaElement formula = parseFormula("(X+2)(X-(Y^3+7)-7cos(2^X+5X))");

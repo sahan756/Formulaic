@@ -21,6 +21,10 @@ public class FunctionElement extends FormulaElement{
 	
 	public void addArg(FormulaElement arg){
 		this.argList.add(arg);
+//		if(arg instanceof VariableElement){ 
+//			if(variableList == null) variableList = new Vector<VariableElement>();
+//			variableList.add((VariableElement)arg);
+//		}
 	}
 	
 	//assign value for a variable
@@ -78,4 +82,17 @@ public class FunctionElement extends FormulaElement{
 		return true;
 	}
 	
+	public Vector<VariableElement> getVariableList(){
+		Vector<FormulaElement> args = this.getArgList();
+		Vector<VariableElement> vars = new Vector<VariableElement>();
+		for (FormulaElement element : args) {
+			if(!(element instanceof ConstantElement) && !(element instanceof VariableElement)){
+				Vector<VariableElement> temp = element.getVariableList();
+				if(temp != null)vars.addAll(temp);
+			} else if(element instanceof VariableElement){
+				vars.add((VariableElement)element);
+			}
+		}
+		return vars;
+	}
 }

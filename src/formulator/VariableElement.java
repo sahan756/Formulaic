@@ -1,5 +1,7 @@
 package formulator;
 
+import java.util.Vector;
+
 public class VariableElement extends FormulaElement{
 	private String varName;
 	private double value;
@@ -8,6 +10,8 @@ public class VariableElement extends FormulaElement{
 		// TODO Auto-generated constructor stub
 		this.varName = varName;
 		isFullyGrounded = false;
+		if(variableList == null) variableList = new Vector<VariableElement>();
+		variableList.add(this);
 	}
 	
 	public String getVarName() {
@@ -62,5 +66,9 @@ public class VariableElement extends FormulaElement{
 	
 	public double evaluate(){
 		return isFullyGrounded ? getValue() : 0;
+	}
+	
+	public Vector<VariableElement> getVariableList(){
+		return variableList;
 	}
 }

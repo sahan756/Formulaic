@@ -1,6 +1,7 @@
 package formulator;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 public class ReferenceFormulaElement extends FormulaElement{
 	private String formulaName;
@@ -55,5 +56,10 @@ public class ReferenceFormulaElement extends FormulaElement{
 	@Override
 	public double getVariableValue(String varName) {
 		return this.getVariableValue(varName);
+	}
+	
+	public Vector<VariableElement> getVariableList(){
+		//return formula.getVariableList();
+		return null;
 	}
 }

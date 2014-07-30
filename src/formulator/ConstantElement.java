@@ -1,5 +1,7 @@
 package formulator;
 
+import java.util.Vector;
+
 public class ConstantElement extends FormulaElement{
 	private Double value;
 	//private String type = "Constant";
@@ -25,6 +27,14 @@ public class ConstantElement extends FormulaElement{
 	
 	public double evaluate(){
 		return getValue();
+	}
+	
+//	public double getFirstDerivative(){
+//		return 0;
+//	}
+	
+	public Vector<VariableElement> getVariableList(){
+		return null;
 	}
 	
 }
