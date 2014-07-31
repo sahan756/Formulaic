@@ -37,7 +37,8 @@ public class VariableElement extends FormulaElement{
 	
 	@Override
 	public void setVariableValue(String varName, double value) {
-		if(this.getVarName().equals(varName)){
+//		if(this.getVarName().equals(varName)){
+		if(this.getVarName().matches("(?i)"+varName)){
 			this.setValue(value);
 			isFullyGrounded = true;
 		}
@@ -57,7 +58,8 @@ public class VariableElement extends FormulaElement{
 	
 	@Override
 	public double getVariableValue(String varName) {
-		if(this.getVarName().equals(varName)){
+//		if(this.getVarName().equals(varName)){
+		if(this.getVarName().matches("(?i)"+varName)){
 			return this.getValue();
 		} else {
 			return 0;

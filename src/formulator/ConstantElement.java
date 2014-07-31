@@ -37,4 +37,8 @@ public class ConstantElement extends FormulaElement{
 		return null;
 	}
 	
+	@Override
+	public boolean isFullyGrounded(){
+		return true;
+	}
 }

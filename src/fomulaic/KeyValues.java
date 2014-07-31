@@ -9,4 +9,6 @@ public class KeyValues {
 	public static final String COMMAND_LOAD_FORMULA = "load_formula";
 	public static final String COMMAND_EVAL_INPUT = "eval_input";
 	public static final String COMMAND_USE_FORMULA = "use_formula";
+	public static final String COMMAND_USE_COMMAND = "use_command";
+	public static final String COMMAND_CLEAR_BOX = "clear_box";
 }

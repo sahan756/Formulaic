@@ -2,11 +2,14 @@ package controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -49,7 +52,6 @@ public class MainFrameController implements ActionListener{
 	DefaultListModel<String> fomulaListModel;
 	DefaultListModel<String> commandListModel;
 	ArrayList<GraphModel> graphList;
-	
 	
 	private Storage storage;
 	
@@ -124,7 +126,23 @@ public class MainFrameController implements ActionListener{
 			onClickAdd();
 		} else if(command == KeyValues.COMMAND_USE_FORMULA){
 			useFormula();
+		} else if(command == KeyValues.COMMAND_USE_COMMAND){
+			useCommand();
+		} else if(command == KeyValues.COMMAND_CLEAR_BOX){
+			clearFields();
 		}
+	}
+	
+	private void clearFields(){
+		textArea.setText("");
+		resultField.setText("");
+		mainFrame.setSelectedElement(null, null);
+	}
+	
+	private void useCommand(){
+		int index = commandJList.getSelectedIndex();
+		String selectedItem = commandListModel.get(index);
+		textArea.setText(selectedItem);
 	}
 	
 	private void useFormula(){
@@ -137,6 +155,7 @@ public class MainFrameController implements ActionListener{
 			FormulaElement element = storage.getStoredFormulas().get(comps[0]);
 			textArea.setText(selectedItem);
 			
+			mainFrame.setSelectedElement(comps[0], element);
 		}
 	}
 	
@@ -192,7 +211,13 @@ public class MainFrameController implements ActionListener{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-            en.writeObject(storage.getStoredFormulas().get("f"));
+            //en.writeObject(storage.getStoredFormulas().get("f"));
+//			Vector<ParsableFormula> formulas = storage.getParsableFormulas();
+//			for (ParsableFormula parsableFormula : formulas) {
+//				en.writeObject(parsableFormula);
+//			}
+			
+			en.writeObject(storage.getParsableFormulas());
             en.close();
 	}
 	
@@ -203,31 +228,75 @@ public class MainFrameController implements ActionListener{
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();
             FileReader reader;
-            System.out.println(textArea.getText());
-            BufferedReader br;
+            //System.out.println(textArea.getText());
+            //BufferedReader br;
 			try {
-				String text;
-				reader = new FileReader(file);
-				br = new BufferedReader(reader);
-				while ((text = br.readLine()) != null){
-					textArea.setText(textArea.getText()+text);
+				//String text;
+				//reader = new FileReader(file);
+				//br = new BufferedReader(reader);
+				
+				FileInputStream fis = new FileInputStream(file);
+				BufferedInputStream bis = new BufferedInputStream(fis);
+//				while ((text = br.readLine()) != null){
+//					textArea.setText(textArea.getText()+text);
+//				}
+				
+				XMLDecoder xmlDecoder = new XMLDecoder(bis);
+				HashMap<String, String> formulas = (HashMap<String, String>)xmlDecoder.readObject();
+				boolean addFormula = true;
+				if(formulas != null){
+					ComplexFormulaElement complex = new ComplexFormulaElement(storage.getStoredFormulas());
+					for (Map.Entry<String, String> entry :formulas.entrySet()) {
+					    String key = entry.getKey();
+					    String value = entry.getValue();
+					    if(storage.getStoredFormulas().containsKey(key)){
+					    	String message = "There's already a formula assigned to '"
+									+ key + "'.\nWould you like to replace?";
+							// Object[] options = {"Yes", "No"};
+							int response = JOptionPane.showOptionDialog(mainFrame, message,
+									"Formula replace", JOptionPane.YES_NO_OPTION,
+									JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+							if (response == JOptionPane.NO_OPTION) {
+								addFormula = false;
+							}
+					    }
+					    
+					    if(addFormula){
+					    	FormulaElement element = complex.parseComplexFormula(value);
+							if(element != null)
+								storage.getStoredFormulas().put(key, element);
+					    }
+					}
+					refreshFormulaList();
 				}
+				
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} 
+			} catch(ClassCastException e){
+				e.printStackTrace();
+			}
         } 
 	}
 	
-	private boolean parseCommand(String command){
+	public boolean parseCommand(String command){
 		
 		//String text = textArea.getText();
 		String text = command;
 		boolean addFormula = false, appendFormula = false, appendValue = false, addToList = false;
 		String trimmedText = text.replaceAll("\\s", ""); // Remove all white
 															// spaces
-
+		ComplexFormulaElement checkEval = new ComplexFormulaElement(storage.getStoredFormulas());
+		FormulaElement element = checkEval.parseComplexFormula(text);
+		if(element != null && element.isFullyGrounded()){
+			resultField.setText(String.valueOf(element.evaluate()));
+			commandListModel.addElement(textArea.getText());
+			commandJList.ensureIndexIsVisible(commandListModel.size()-1);
+			return true;
+		}
+		
 		if (trimmedText.matches("^\\w=[^=]+$")) { // check for string with
 													// character followed by '='
 													// followed by any character
@@ -235,6 +304,19 @@ public class MainFrameController implements ActionListener{
 			String[] comps = text.split("=");
 			// FormulaElement formula = FormulaElement.parseFormula(comps[1]);
 			comps[0] = comps[0].replaceAll("\\s", "");
+			
+			ComplexFormulaElement formula = new ComplexFormulaElement(comps[0], storage.getStoredFormulas());
+			
+//			FormulaElement evalElement = checkEval.parseComplexFormula(comps[1]);
+//			
+//			if(evalElement != null && evalElement.isFullyGrounded()){
+//				resultField.setText(String.valueOf(element.evaluate()));
+//				commandListModel.addElement(textArea.getText());
+//				commandJList.ensureIndexIsVisible(commandListModel.size()-1);
+//				return true;
+//			}
+			
+			
 			if (storage.getStoredFormulas().containsKey(comps[0])) {
 				String message = "There's already a formula assigned to '"
 						+ comps[0] + "'.\nWould you like to replace?";
@@ -253,13 +335,14 @@ public class MainFrameController implements ActionListener{
 			if (addFormula) {
 //				storage.addFormula(comps[0],
 //						FormulaElement.parseFormula(comps[1]));
-				ComplexFormulaElement formula = new ComplexFormulaElement(comps[0], storage.getStoredFormulas());
+				//ComplexFormulaElement formula = new ComplexFormulaElement(comps[0], storage.getStoredFormulas());
 				storage.addFormula(comps[0], formula.parseComplexFormula(comps[1]));
 				//textArea.append(textArea.getText() + "\n");
 				//fomulaListModel.addElement(textArea.getText());
 				addToList = true;
-				fomulaListModel.addElement(textArea.getText());
-				formulaJList.ensureIndexIsVisible(fomulaListModel.size()-1);
+//				fomulaListModel.addElement(textArea.getText());
+//				formulaJList.ensureIndexIsVisible(fomulaListModel.size()-1);
+				refreshFormulaList();
 			}
 		} else if(text.matches("^eval\\s[a-zA-Z]$")){
 			String[] comps = text.split("\\s");
@@ -373,7 +456,8 @@ public class MainFrameController implements ActionListener{
 		if(addToList){
 //			fomulaListModel.addElement(textArea.getText());
 //			formulaJList.ensureIndexIsVisible(fomulaListModel.size()-1);
-			commandListModel.addElement(textArea.getText());
+			//commandListModel.addElement(textArea.getText());
+			commandListModel.addElement(command);
 			commandJList.ensureIndexIsVisible(commandListModel.size()-1);
 		}
 		
@@ -432,6 +516,15 @@ public class MainFrameController implements ActionListener{
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	private void refreshFormulaList(){
+		fomulaListModel.clear();
+		for (Map.Entry<String, FormulaElement> entry : storage.getStoredFormulas().entrySet()) {
+		    String key = entry.getKey();
+		    FormulaElement value = entry.getValue();
+		    fomulaListModel.addElement(key + " = " +value.toString());
+		}
 	}
 	
 	private void printStoredFormulas(){

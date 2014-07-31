@@ -10,6 +10,14 @@ public class ComplexFormulaElement extends FormulaElement{
 	private HashMap<String, FormulaElement> storedFormulas;
 	private String formulaName;
 	
+	public String getFormulaName() {
+		return formulaName;
+	}
+
+	public void setFormulaName(String formulaName) {
+		this.formulaName = formulaName;
+	}
+
 	public ComplexFormulaElement(HashMap<String, FormulaElement> storedFormulas){
 		this.storedFormulas = storedFormulas;
 		//parseComplexFormula(text);
@@ -23,29 +31,35 @@ public class ComplexFormulaElement extends FormulaElement{
 	
 	public FormulaElement parseComplexFormula(String text){
 		
-		StringTokenizer tokenizer = new StringTokenizer(text, "+-/^()* ", true);
-		Vector<String> pass0 = new Vector<String>(); 
-		Vector<Object> elements = new Vector<Object>();
-		
-		//Add to list with Removed white spaces and split compound tokens
-		while(tokenizer.hasMoreTokens()){
-			String token = tokenizer.nextToken();
-			if(token.matches("\\s")) continue;
+		try {
+			StringTokenizer tokenizer = new StringTokenizer(text, "+-/^()* ", true);
+			Vector<String> pass0 = new Vector<String>(); 
+			Vector<Object> elements = new Vector<Object>();
 			
-			//elements.add(token);
-			Vector<String> splits = splitCompund(token); //Split compound tokens e.g. 2X, 7cos
-			for (String split : splits) {
-				pass0.add(split);
+			//Add to list with Removed white spaces and split compound tokens
+			while(tokenizer.hasMoreTokens()){
+				String token = tokenizer.nextToken();
+				if(token.matches("\\s")) continue;
+				
+				//elements.add(token);
+				Vector<String> splits = splitCompund(token); //Split compound tokens e.g. 2X, 7cos
+				for (String split : splits) {
+					pass0.add(split);
+				}
 			}
-		}
-		
-		elements = pass1(pass0);
-		
-		elements = parseReferredFormulas(elements);
-		
-		if(elements.size() > 0){
-			return (FormulaElement)elements.get(0);
-		} else {
+			
+			elements = pass1(pass0);
+			
+			elements = parseReferredFormulas(elements);
+			
+			if(elements.size() > 0){
+				return (FormulaElement)elements.get(0);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
 			return null;
 		}
 		

@@ -84,34 +84,40 @@ public class FormulaElement{
 //	}
 	
 	public static FormulaElement parseFormula(String text){
-		text = text.replaceAll("\\s", ""); //Remove all white spaces
-		//String[] functionNames = {"cos", "sin"};
-		StringTokenizer tokenizer = new StringTokenizer(text, "+-/^()*", true);
-		Vector<String> pass0 = new Vector<String>(); 
-		Vector<Object> elements = new Vector<Object>();
-		
-		//Add to list with Removed white spaces and split compound tokens
-		while(tokenizer.hasMoreTokens()){
-			String token = tokenizer.nextToken();
-			//System.out.println(token);
-			Vector<String> splits = splitCompund(token); //Split compound tokens e.g. 2X, 7cos
-			for (String split : splits) {
-				pass0.add(split);
+		try {
+			text = text.replaceAll("\\s", ""); //Remove all white spaces
+			//String[] functionNames = {"cos", "sin"};
+			StringTokenizer tokenizer = new StringTokenizer(text, "+-/^()*", true);
+			Vector<String> pass0 = new Vector<String>(); 
+			Vector<Object> elements = new Vector<Object>();
+			
+			//Add to list with Removed white spaces and split compound tokens
+			while(tokenizer.hasMoreTokens()){
+				String token = tokenizer.nextToken();
+				//System.out.println(token);
+				Vector<String> splits = splitCompund(token); //Split compound tokens e.g. 2X, 7cos
+				for (String split : splits) {
+					pass0.add(split);
+				}
+				
 			}
 			
-		}
-		
-		// pass 1 - create constants and variables
-		elements = pass1(pass0);
+			// pass 1 - create constants and variables
+			elements = pass1(pass0);
 
-		elements = parseElements(elements); //recursive parser
-		
+			elements = parseElements(elements); //recursive parser
+			
 //		for (Object val : elements) {
 //			System.out.println(val.getClass().toString() + "\t" + val);
 //		}
-		if(elements.size() > 0){
-			return (FormulaElement)elements.get(0);
-		} else {
+			if(elements.size() > 0){
+				return (FormulaElement)elements.get(0);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
 			return null;
 		}
 	}
@@ -243,20 +249,26 @@ public class FormulaElement{
 	private static Vector<Object> pass2(Vector<Object> list) {
 		Object prevElement = null;
 		Vector<Object> pass2 = new Vector<Object>();
-		for (int i = 0; i < list.size(); i++) {
-			Object val = list.get(i);
-			if (val instanceof FormulaElement
-					&& prevElement instanceof FormulaElement) {
-				MultipleFunctionElement multi = new MultipleFunctionElement();
-				multi.addArg((FormulaElement) prevElement);
-				multi.addArg((FormulaElement) val);
-				pass2.remove(pass2.size()-1);
-				pass2.add(multi);
-				val = multi;
-			} else {
-				pass2.add(val);
+		try {
+			for (int i = 0; i < list.size(); i++) {
+				Object val = list.get(i);
+				if (val instanceof FormulaElement
+						&& prevElement instanceof FormulaElement) {
+					MultipleFunctionElement multi = new MultipleFunctionElement();
+					multi.addArg((FormulaElement) prevElement);
+					multi.addArg((FormulaElement) val);
+					pass2.remove(pass2.size()-1);
+					pass2.add(multi);
+					val = multi;
+				} else {
+					pass2.add(val);
+				}
+				prevElement = val;
 			}
-			prevElement = val;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			return null;
 		}
 		return pass2;
 	}
@@ -265,32 +277,38 @@ public class FormulaElement{
 	private static Vector<Object> pass3(Vector<Object> list) {
 		Object prevElement = null;
 		Vector<Object> pass3 = new Vector<Object>();
-		String[] keywords = {"sin", "cos"};
-		List<String> keywordList = Arrays.asList(keywords);
-		boolean inBracket = false;
-		for (int i = 0; i < list.size(); i++) {
-			Object val = list.get(i);
-			//System.out.println(val);
-			if(val.toString().matches("\\(") && keywordList.contains(prevElement) && list.get(i+1) instanceof FormulaElement){
-				inBracket = true;
-				pass3.remove(pass3.size()-1);
-				if(prevElement.toString().matches("sin")){
-					SineFunctionElement sin = new SineFunctionElement((FormulaElement)list.get(i+1));
-					pass3.add(sin);
-				} else if(prevElement.toString().matches("cos")){
-					FormulaElement elem = (FormulaElement)list.get(i+1);
-					CosineFunctionElement cos = new CosineFunctionElement(elem);
-					pass3.add(cos);
+		try {
+			String[] keywords = {"sin", "cos"};
+			List<String> keywordList = Arrays.asList(keywords);
+			boolean inBracket = false;
+			for (int i = 0; i < list.size(); i++) {
+				Object val = list.get(i);
+				//System.out.println(val);
+				if(val.toString().matches("\\(") && keywordList.contains(prevElement) && list.get(i+1) instanceof FormulaElement){
+					inBracket = true;
+					pass3.remove(pass3.size()-1);
+					if(prevElement.toString().matches("sin")){
+						SineFunctionElement sin = new SineFunctionElement((FormulaElement)list.get(i+1));
+						pass3.add(sin);
+					} else if(prevElement.toString().matches("cos")){
+						FormulaElement elem = (FormulaElement)list.get(i+1);
+						CosineFunctionElement cos = new CosineFunctionElement(elem);
+						pass3.add(cos);
+					}
+				} else if(val.toString().matches("\\)") && inBracket){
+					inBracket = false;
+					continue;
+				} else if(!inBracket){
+					pass3.add(val);
 				}
-			} else if(val.toString().matches("\\)") && inBracket){
-				inBracket = false;
-				continue;
-			} else if(!inBracket){
-				pass3.add(val);
+				prevElement = val;
 			}
-			prevElement = val;
+			pass3 = pass2(pass3); //apply multiple function after cosine or sine e.g 7cos(2x);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			return null;
 		}
-		pass3 = pass2(pass3); //apply multiple function after cosine or sine e.g 7cos(2x);
 		return pass3;
 	}
 	
@@ -298,26 +316,32 @@ public class FormulaElement{
 	private static Vector<Object> pass4(Vector<Object> list) {
 		Object prevElement = null;
 		Vector<Object> pass4 = new Vector<Object>();
-		boolean skipNext = false;
-		for (int i = 0; i < list.size(); i++) {
-			Object val = list.get(i);
-			if(skipNext){
-				skipNext = false;
-				continue;
+		try {
+			boolean skipNext = false;
+			for (int i = 0; i < list.size(); i++) {
+				Object val = list.get(i);
+				if(skipNext){
+					skipNext = false;
+					continue;
+				}
+				
+				if(val.toString().matches("\\^") && prevElement instanceof FormulaElement){
+					//System.out.println(val);
+					pass4.remove(pass4.size()-1);
+					skipNext = true;
+					PowerFunctionElement power = new PowerFunctionElement();
+					power.addArg((FormulaElement)prevElement);
+					power.addArg((FormulaElement)list.get(i+1));
+					pass4.add(power);
+				} else {
+					pass4.add(val);
+				}
+				prevElement = val;
 			}
-			
-			if(val.toString().matches("\\^") && prevElement instanceof FormulaElement){
-				//System.out.println(val);
-				pass4.remove(pass4.size()-1);
-				skipNext = true;
-				PowerFunctionElement power = new PowerFunctionElement();
-				power.addArg((FormulaElement)prevElement);
-				power.addArg((FormulaElement)list.get(i+1));
-				pass4.add(power);
-			} else {
-				pass4.add(val);
-			}
-			prevElement = val;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			return null;
 		}
 		return pass4;
 	}
@@ -326,26 +350,32 @@ public class FormulaElement{
 	private static Vector<Object> pass5(Vector<Object> list) {
 		Object prevElement = null;
 		Vector<Object> pass5 = new Vector<Object>();
-		boolean skipNext = false;
-		for (int i = 0; i < list.size(); i++) {
-			Object val = list.get(i);
-			if(skipNext){
-				skipNext = false;
-				continue;
+		try {
+			boolean skipNext = false;
+			for (int i = 0; i < list.size(); i++) {
+				Object val = list.get(i);
+				if(skipNext){
+					skipNext = false;
+					continue;
+				}
+				
+				if(val.toString().matches("\\/") && prevElement instanceof FormulaElement){
+					//System.out.println(val);
+					pass5.remove(pass5.size()-1);
+					skipNext = true;
+					DivideFunctionElement divide = new DivideFunctionElement();
+					divide.addArg((FormulaElement)prevElement);
+					divide.addArg((FormulaElement)list.get(i+1));
+					pass5.add(divide);
+				} else {
+					pass5.add(val);
+				}
+				prevElement = val;
 			}
-			
-			if(val.toString().matches("\\/") && prevElement instanceof FormulaElement){
-				//System.out.println(val);
-				pass5.remove(pass5.size()-1);
-				skipNext = true;
-				DivideFunctionElement divide = new DivideFunctionElement();
-				divide.addArg((FormulaElement)prevElement);
-				divide.addArg((FormulaElement)list.get(i+1));
-				pass5.add(divide);
-			} else {
-				pass5.add(val);
-			}
-			prevElement = val;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			return null;
 		}
 		return pass5;
 	}
@@ -354,42 +384,48 @@ public class FormulaElement{
 	private static Vector<Object> pass6(Vector<Object> list) {
 		Object prevElement = null;
 		Vector<Object> pass6 = new Vector<Object>();
-		boolean skipNext = false;
-		for (int i = 0; i < list.size(); i++) {
-			Object val = list.get(i);
-			if (skipNext) {
-				skipNext = false;
-				continue;
-			}
+		try {
+			boolean skipNext = false;
+			for (int i = 0; i < list.size(); i++) {
+				Object val = list.get(i);
+				if (skipNext) {
+					skipNext = false;
+					continue;
+				}
 
-			if (val.toString().matches("\\+")
-					&& prevElement instanceof FormulaElement) {
-				// System.out.println(val);
-				pass6.remove(pass6.size() - 1);
-				skipNext = true;
-				PlusFunctionElement plus = new PlusFunctionElement();
-				plus.addArg((FormulaElement) prevElement);
-				plus.addArg((FormulaElement) list.get(i + 1));
-				pass6.add(plus);
-				prevElement = plus;
-				continue;
-			} 
-			else if (val.toString().matches("\\-")
-					&& prevElement instanceof FormulaElement) {
-				// System.out.println(val);
-				pass6.remove(pass6.size() - 1);
-				skipNext = true;
-				MinusFunctionElement minus = new MinusFunctionElement();
-				minus.addArg((FormulaElement) prevElement);
-				minus.addArg((FormulaElement) list.get(i + 1));
-				pass6.add(minus);
-				prevElement = minus;
-				continue;
-			} 
-			else {
-				pass6.add(val);
+				if (val.toString().matches("\\+")
+						&& prevElement instanceof FormulaElement) {
+					// System.out.println(val);
+					pass6.remove(pass6.size() - 1);
+					skipNext = true;
+					PlusFunctionElement plus = new PlusFunctionElement();
+					plus.addArg((FormulaElement) prevElement);
+					plus.addArg((FormulaElement) list.get(i + 1));
+					pass6.add(plus);
+					prevElement = plus;
+					continue;
+				} 
+				else if (val.toString().matches("\\-")
+						&& prevElement instanceof FormulaElement) {
+					// System.out.println(val);
+					pass6.remove(pass6.size() - 1);
+					skipNext = true;
+					MinusFunctionElement minus = new MinusFunctionElement();
+					minus.addArg((FormulaElement) prevElement);
+					minus.addArg((FormulaElement) list.get(i + 1));
+					pass6.add(minus);
+					prevElement = minus;
+					continue;
+				} 
+				else {
+					pass6.add(val);
+				}
+				prevElement = val;
 			}
-			prevElement = val;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			return null;
 		}
 		return pass6;
 	}

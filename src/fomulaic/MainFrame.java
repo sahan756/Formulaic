@@ -58,6 +58,8 @@ import javax.swing.DropMode;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import controllers.MainFrameController;
+import formulator.ComplexFormulaElement;
+import formulator.FormulaElement;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -131,6 +133,14 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
     static Map<Double,Double> myMap = new HashMap<Double,Double>();	
     static ArrayList<HashMap<String, String>> myArrList = new ArrayList<HashMap<String, String>>();
     static HashMap<String, String> map;
+    
+    FormulaElement selectedElement;
+    String formulaName;
+    
+    public void setSelectedElement(String name, FormulaElement elem){
+    	this.formulaName = name;
+    	this.selectedElement = elem;
+    }
 	
 	//Allow acces textArea to the controller
 //	public JTextField getTextArea() {
@@ -232,6 +242,8 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 		btnClear.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
 		btnClear.setBounds(263, 77, 64, 23);
 		panel.add(btnClear);
+		btnClear.setActionCommand(KeyValues.COMMAND_CLEAR_BOX);
+		btnClear.addActionListener(controller);
 		
 		JButton btnEvaluate = new JButton("Evaluate");
 		btnEvaluate.setForeground(Color.RED);
@@ -455,16 +467,21 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 			panel_7.add(pane);
 			
 			JButton btnUse = new JButton("Use");
-			btnUse.setBounds(10, 99, 63, 20);
+			btnUse.setBounds(10, 95, 63, 20);
 			panel_2.add(btnUse);
 			
 			btnUse.setActionCommand(KeyValues.COMMAND_USE_FORMULA);
 			
-			JLabel lblOperationHistory = new JLabel("Operation History");
+			JLabel lblOperationHistory = new JLabel("Command list");
 			lblOperationHistory.setForeground(Color.YELLOW);
 			lblOperationHistory.setFont(new Font("Cambria", Font.BOLD | Font.ITALIC, 11));
-			lblOperationHistory.setBounds(160, 0, 94, 19);
+			lblOperationHistory.setBounds(160, 0, 127, 19);
 			panel_2.add(lblOperationHistory);
+			
+			JButton btn_use_cmd = new JButton("Use");
+			btn_use_cmd.setActionCommand(KeyValues.COMMAND_USE_COMMAND);
+			btn_use_cmd.setBounds(224, 95, 63, 20);
+			panel_2.add(btn_use_cmd);
 			btnUse.addActionListener(controller);
 
  
@@ -514,6 +531,7 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 		panel_3.add(lblY);
 		
 		y_assign = new JTextField();
+		y_assign.addKeyListener(this);
 		y_assign.setBounds(74, 50, 45, 20);
 		panel_3.add(y_assign);
 		y_assign.setColumns(10);
@@ -524,6 +542,7 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 		panel_3.add(lblZ);
 		
 		z_assign = new JTextField();
+		z_assign.addKeyListener(this);
 		z_assign.setColumns(10);
 		z_assign.setBounds(74, 86, 45, 20);
 		panel_3.add(z_assign);
@@ -534,6 +553,7 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 		panel_3.add(lblA);
 		
 		a_assign = new JTextField();
+		a_assign.addKeyListener(this);
 		a_assign.setColumns(10);
 		a_assign.setBounds(74, 137, 45, 20);
 		panel_3.add(a_assign);
@@ -544,11 +564,13 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 		panel_3.add(lblC);
 		
 		c_assign = new JTextField();
+		c_assign.addKeyListener(this);
 		c_assign.setColumns(10);
 		c_assign.setBounds(74, 215, 45, 20);
 		panel_3.add(c_assign);
 		
 		b_assign = new JTextField();
+		b_assign.addKeyListener(this);
 		b_assign.setColumns(10);
 		b_assign.setBounds(74, 177, 45, 20);
 		panel_3.add(b_assign);
@@ -564,31 +586,37 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 		panel_3.add(lblI);
 		
 		i_assign = new JTextField();
+		i_assign.addKeyListener(this);
 		i_assign.setColumns(10);
 		i_assign.setBounds(219, 8, 45, 20);
 		panel_3.add(i_assign);
 		
 		j_assign = new JTextField();
+		j_assign.addKeyListener(this);
 		j_assign.setColumns(10);
 		j_assign.setBounds(219, 47, 45, 20);
 		panel_3.add(j_assign);
 		
 		k_assign = new JTextField();
+		k_assign.addKeyListener(this);
 		k_assign.setColumns(10);
 		k_assign.setBounds(219, 83, 45, 20);
 		panel_3.add(k_assign);
 		
 		l_assign = new JTextField();
+		l_assign.addKeyListener(this);
 		l_assign.setColumns(10);
 		l_assign.setBounds(219, 134, 45, 20);
 		panel_3.add(l_assign);
 		
 		m_assign = new JTextField();
+		m_assign.addKeyListener(this);
 		m_assign.setColumns(10);
 		m_assign.setBounds(219, 174, 45, 20);
 		panel_3.add(m_assign);
 		
 		n_assign = new JTextField();
+		n_assign.addKeyListener(this);
 		n_assign.setColumns(10);
 		n_assign.setBounds(219, 212, 45, 20);
 		panel_3.add(n_assign);
@@ -1097,11 +1125,41 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 	public void keyReleased(KeyEvent e) {
 		Object source = e.getSource();
 		//String value = source.
-		if(e.getKeyCode() == KeyEvent.VK_ENTER){
+		System.out.println(e.getKeyCode());
+		if(e.getKeyCode() == KeyEvent.VK_ENTER && selectedElement != null){
+			
+			String command = formulaName + "(?)";
+			String value="";
 			if(source == x_assign){
-				
-			}
-		}
+				value = "X="+x_assign.getText();
+			} else if(source == y_assign){
+				value = "Y="+y_assign.getText();
+			} else if(source == z_assign){
+				value = "Z="+z_assign.getText();
+			} else if(source == i_assign){
+				value = "I="+i_assign.getText();
+			} else if(source == j_assign){
+				value = "J="+j_assign.getText();
+			} else if(source == k_assign){
+				value = "K="+k_assign.getText();
+			} else if(source == a_assign){
+				value = "A="+a_assign.getText();
+			} else if(source == b_assign){
+				value = "B="+b_assign.getText();
+			} else if(source == c_assign){
+				value = "C="+c_assign.getText();
+			} else if(source == l_assign){
+				value = "L="+l_assign.getText();
+			} else if(source == m_assign){
+				value = "M="+m_assign.getText();
+			} else if(source == n_assign){
+				value = "N="+n_assign.getText();
+			} 
+			
+			command = command.replaceAll("\\?", value);
+			controller.parseCommand(command);
+			//System.out.println(command);
+		} 
 	}
 
 	@Override
@@ -1137,6 +1195,4 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 			System.out.println(mEntry.getKey() + " : " + mEntry.getValue());
 		}*/
 	}
-	
-	
 }

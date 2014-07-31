@@ -33,7 +33,7 @@ public class ReferenceFormulaElement extends FormulaElement{
 	@Override
 	public void setVariableValue(String varName, double value) {
 		//this.setVariableValue(varName, value);
-		assignValue.setVariableValue(varName, value);
+		if(!(assignValue instanceof ConstantElement)) assignValue.setVariableValue(varName, value);
 		formula.setVariableValue(varName, assignValue.evaluate());
 		return;
 	}
@@ -43,8 +43,9 @@ public class ReferenceFormulaElement extends FormulaElement{
 		//this.setVariableValue(value);
 		if (!(assignValue instanceof ConstantElement)) {
 			assignValue.setVariableValue(value);
-			formula.setVariableValue(assignValue.evaluate());
+			//formula.setVariableValue(assignValue.evaluate());
 		}
+		formula.setVariableValue(assignValue.evaluate());
 		return;
 	}
 	
@@ -55,7 +56,11 @@ public class ReferenceFormulaElement extends FormulaElement{
 	
 	@Override
 	public double getVariableValue(String varName) {
-		return this.getVariableValue(varName);
+//		return this.getVariableValue(varName);
+		if (!(assignValue instanceof ConstantElement)) 
+			return assignValue.getVariableValue(varName);
+		else
+			return 0;
 	}
 	
 	public Vector<VariableElement> getVariableList(){
