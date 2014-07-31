@@ -45,11 +45,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import javax.swing.AbstractListModel;
 import javax.swing.DropMode;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import controllers.MainFrameController;
 
 import java.awt.event.KeyAdapter;
@@ -120,6 +127,10 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 	
 	MainFrameController controller;
 	JTextField textArea;
+	
+    static Map<Double,Double> myMap = new HashMap<Double,Double>();	
+    static ArrayList<HashMap<String, String>> myArrList = new ArrayList<HashMap<String, String>>();
+    static HashMap<String, String> map;
 	
 	//Allow acces textArea to the controller
 //	public JTextField getTextArea() {
@@ -874,6 +885,67 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 //		});
 //
 //
+		btnSave_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Comma Seperated File", "XML"));
+		        fileChooser.setAcceptAllFileFilterUsed(true);
+		        int result = fileChooser.showSaveDialog(frame);
+		        if (result != JFileChooser.APPROVE_OPTION) {
+		           return ;
+		        }
+				
+		        File fn = new File(fileChooser.getSelectedFile() + ".csv");
+				Iterator<Entry<Double, Double>> iter = myMap.entrySet().iterator();
+				CSVWriter writer = null;
+				try {
+					writer = new CSVWriter(new FileWriter(fn));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				        writer.writeNext("X" , "Y");
+					while (iter.hasNext()) {
+						Map.Entry mEntry = (Map.Entry) iter.next();
+						System.out.println(mEntry.getKey() + " : " + mEntry.getValue());
+						writer.writeNext(mEntry.getKey().toString() , mEntry.getValue().toString());
+						
+					}	
+					try {
+						writer.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		    /*    BufferedWriter bw;
+						try {
+							//bw = new BufferedWriter(new FileWriter(fn));
+							CSVWriter writer = new CSVWriter(new FileWriter(fn));
+							writer.writeNext(myMap.toString());
+							writer.close();
+							for(int i=0; i < myArrList.size();i++){
+								
+								
+								bw.write(",");
+								bw.write(myArrList.get(i).get("y").toString());
+								bw.write("\r\n");
+								System.out.println(myArrList.get(i));
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					
+
+				/*writer.writeNext(country);
+				writer.close();*/
+				
+			}
+
+			
+		});
+		
+		
 	}
 	
 	
@@ -1043,4 +1115,28 @@ public class MainFrame extends JFrame implements ActionListener,KeyListener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public static void toSave(double x, double y) {
+ 
+		myMap.put(x, y);
+	/*	String x1 = Double.toString(x);
+		String y1 = Double.toString(y);
+		
+		System.out.println(x1 +","+ y1);
+		map = new HashMap<String, String>();
+		map.put("x",x1);
+		map.put("y",y1);
+		myArrList.add(map);*/
+		
+		
+		
+		/* Iterator<Entry<Double, Double>> iter = myMap.entrySet().iterator();
+
+		while (iter.hasNext()) {
+			Map.Entry mEntry = (Map.Entry) iter.next();
+			System.out.println(mEntry.getKey() + " : " + mEntry.getValue());
+		}*/
+	}
+	
+	
 }

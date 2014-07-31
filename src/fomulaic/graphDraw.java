@@ -122,7 +122,7 @@ public class GraphDraw extends JFrame {
     	 return new ChartPanel(chart);
     }
  
-    private XYDataset createDataset() {
+    public XYDataset createDataset() {
             XYSeriesCollection dataset = new XYSeriesCollection();
             
             //draw graphs
@@ -135,6 +135,8 @@ public class GraphDraw extends JFrame {
                 
                 for (XYData xyData : xyList) {
 					s.add(xyData.X, xyData.Y);
+					MainFrame.toSave(xyData.X, xyData.Y);
+					
 				}
                 
                 dataset.addSeries(s);

@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="ext/JTattoo-1.6.9.jar"/>
 	<classpathentry kind="lib" path="ext/jcommon-1.0.23/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="ext/jfreechart-1.0.14/jfreechart-1.0.14-demo.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Eranga/Documents/GitHub/Formulaic/ext/opencsv-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
