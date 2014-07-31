@@ -34,7 +34,7 @@ public class PlusFunctionElement extends FunctionElement{
 //		try {
 //			System.out.println("Starting writeObject");
 //			os.defaultWriteObject();
-//			os.writeInt(cObj.getCollarSize());
+//			os.writeObject(getArgList());
 //		} catch (Exception ex) {
 //			ex.printStackTrace();
 //		}
@@ -44,7 +44,7 @@ public class PlusFunctionElement extends FunctionElement{
 //		try {
 //			System.out.println("Starting readObject");
 //			is.defaultReadObject();
-//			cObj = new Collar(is.readInt());
+//			//cObj = new Collar(is.readInt());
 //		} catch (Exception ex) {
 //			ex.printStackTrace();
 //		}

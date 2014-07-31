@@ -19,6 +19,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
@@ -49,30 +50,30 @@ import java.util.logging.Level;
 import javax.swing.AbstractListModel;
 import javax.swing.DropMode;
 
-
 import controllers.MainFrameController;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 
 
 
-public class MainFrame extends JFrame implements ActionListener {
+public class MainFrame extends JFrame implements ActionListener,KeyListener {
 
 	private JPanel contentPane;
 	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	private JTextField textField_6;
-	private JTextField textField_7;
-	private JTextField textField_8;
-	private JTextField textField_9;
-	private JTextField textField_10;
-	private JTextField textField_11;
-	private JTextField textField_12;
-	private JTextField textField_13;
+	private JTextField x_assign;
+	private JTextField y_assign;
+	private JTextField z_assign;
+	private JTextField a_assign;
+	private JTextField c_assign;
+	private JTextField b_assign;
+	private JTextField i_assign;
+	private JTextField j_assign;
+	private JTextField k_assign;
+	private JTextField l_assign;
+	private JTextField m_assign;
+	private JTextField n_assign;
 	private JTextField textField_14;
 	private JTextField textField_15;
 	private JTextField textField_16;
@@ -121,17 +122,17 @@ public class MainFrame extends JFrame implements ActionListener {
 	JTextField textArea;
 	
 	//Allow acces textArea to the controller
-	public JTextField getTextArea() {
-		return textArea;
-	}
-	
-	public JTextField getResultField(){
-		return textField_1;
-	}
-	
-	public DefaultListModel<String> getFormulaListModel(){
-		return listModel;
-	}
+//	public JTextField getTextArea() {
+//		return textArea;
+//	}
+//	
+//	public JTextField getResultField(){
+//		return textField_1;
+//	}
+//	
+//	public DefaultListModel<String> getFormulaListModel(){
+//		return listModel;
+//	}
 	
 	/**
 	 * Launch the application.
@@ -429,8 +430,12 @@ public class MainFrame extends JFrame implements ActionListener {
 		scrollPane.setBounds(0, 0, 127, 68);
 		panel_6.add(scrollPane);
 		
-		JList list = new JList();
-		scrollPane.setRowHeaderView(list);
+		DefaultListModel<String> commandListModel = new DefaultListModel<String>();
+		JList<String> list = new JList<String>(commandListModel);
+		scrollPane.setViewportView(list);
+		
+		controller.setCommandJList(list);
+		controller.setCommandListModel(commandListModel);
 			
 			JPanel panel_7 = new JPanel();
 			panel_7.setBounds(10, 26, 140, 68);
@@ -486,55 +491,56 @@ public class MainFrame extends JFrame implements ActionListener {
 		lblX.setBounds(28, 14, 33, 14);
 		panel_3.add(lblX);
 		
-		textField_2 = new JTextField();
-		textField_2.setBounds(74, 11, 45, 20);
-		panel_3.add(textField_2);
-		textField_2.setColumns(10);
+		x_assign = new JTextField();
+		x_assign.setBounds(74, 11, 45, 20);
+		panel_3.add(x_assign);
+		x_assign.setColumns(10);
+		x_assign.addKeyListener(this);
 		
 		JLabel lblY = new JLabel("Y = ");
 		lblY.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblY.setBounds(28, 53, 33, 14);
 		panel_3.add(lblY);
 		
-		textField_3 = new JTextField();
-		textField_3.setBounds(74, 50, 45, 20);
-		panel_3.add(textField_3);
-		textField_3.setColumns(10);
+		y_assign = new JTextField();
+		y_assign.setBounds(74, 50, 45, 20);
+		panel_3.add(y_assign);
+		y_assign.setColumns(10);
 		
 		JLabel lblZ = new JLabel("Z = ");
 		lblZ.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblZ.setBounds(28, 89, 33, 14);
 		panel_3.add(lblZ);
 		
-		textField_4 = new JTextField();
-		textField_4.setColumns(10);
-		textField_4.setBounds(74, 86, 45, 20);
-		panel_3.add(textField_4);
+		z_assign = new JTextField();
+		z_assign.setColumns(10);
+		z_assign.setBounds(74, 86, 45, 20);
+		panel_3.add(z_assign);
 		
 		JLabel lblA = new JLabel("A = ");
 		lblA.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblA.setBounds(28, 140, 33, 14);
 		panel_3.add(lblA);
 		
-		textField_5 = new JTextField();
-		textField_5.setColumns(10);
-		textField_5.setBounds(74, 137, 45, 20);
-		panel_3.add(textField_5);
+		a_assign = new JTextField();
+		a_assign.setColumns(10);
+		a_assign.setBounds(74, 137, 45, 20);
+		panel_3.add(a_assign);
 		
 		JLabel lblC = new JLabel("C =");
 		lblC.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
 		lblC.setBounds(28, 221, 33, 14);
 		panel_3.add(lblC);
 		
-		textField_6 = new JTextField();
-		textField_6.setColumns(10);
-		textField_6.setBounds(74, 215, 45, 20);
-		panel_3.add(textField_6);
+		c_assign = new JTextField();
+		c_assign.setColumns(10);
+		c_assign.setBounds(74, 215, 45, 20);
+		panel_3.add(c_assign);
 		
-		textField_7 = new JTextField();
-		textField_7.setColumns(10);
-		textField_7.setBounds(74, 177, 45, 20);
-		panel_3.add(textField_7);
+		b_assign = new JTextField();
+		b_assign.setColumns(10);
+		b_assign.setBounds(74, 177, 45, 20);
+		panel_3.add(b_assign);
 		
 		JLabel lblB = new JLabel("B =");
 		lblB.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
@@ -546,35 +552,35 @@ public class MainFrame extends JFrame implements ActionListener {
 		lblI.setBounds(173, 11, 36, 14);
 		panel_3.add(lblI);
 		
-		textField_8 = new JTextField();
-		textField_8.setColumns(10);
-		textField_8.setBounds(219, 8, 45, 20);
-		panel_3.add(textField_8);
+		i_assign = new JTextField();
+		i_assign.setColumns(10);
+		i_assign.setBounds(219, 8, 45, 20);
+		panel_3.add(i_assign);
 		
-		textField_9 = new JTextField();
-		textField_9.setColumns(10);
-		textField_9.setBounds(219, 47, 45, 20);
-		panel_3.add(textField_9);
+		j_assign = new JTextField();
+		j_assign.setColumns(10);
+		j_assign.setBounds(219, 47, 45, 20);
+		panel_3.add(j_assign);
 		
-		textField_10 = new JTextField();
-		textField_10.setColumns(10);
-		textField_10.setBounds(219, 83, 45, 20);
-		panel_3.add(textField_10);
+		k_assign = new JTextField();
+		k_assign.setColumns(10);
+		k_assign.setBounds(219, 83, 45, 20);
+		panel_3.add(k_assign);
 		
-		textField_11 = new JTextField();
-		textField_11.setColumns(10);
-		textField_11.setBounds(219, 134, 45, 20);
-		panel_3.add(textField_11);
+		l_assign = new JTextField();
+		l_assign.setColumns(10);
+		l_assign.setBounds(219, 134, 45, 20);
+		panel_3.add(l_assign);
 		
-		textField_12 = new JTextField();
-		textField_12.setColumns(10);
-		textField_12.setBounds(219, 174, 45, 20);
-		panel_3.add(textField_12);
+		m_assign = new JTextField();
+		m_assign.setColumns(10);
+		m_assign.setBounds(219, 174, 45, 20);
+		panel_3.add(m_assign);
 		
-		textField_13 = new JTextField();
-		textField_13.setColumns(10);
-		textField_13.setBounds(219, 212, 45, 20);
-		panel_3.add(textField_13);
+		n_assign = new JTextField();
+		n_assign.setColumns(10);
+		n_assign.setBounds(219, 212, 45, 20);
+		panel_3.add(n_assign);
 		
 		JLabel lblJ = new JLabel("J = ");
 		lblJ.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 14));
@@ -1012,6 +1018,29 @@ public class MainFrame extends JFrame implements ActionListener {
 			//textArea.append("N");
 			textArea.setText(textArea.getText()+"N");
 		}
+		
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e) {
+		Object source = e.getSource();
+		//String value = source.
+		if(e.getKeyCode() == KeyEvent.VK_ENTER){
+			if(source == x_assign){
+				
+			}
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 }

@@ -44,8 +44,10 @@ public class MainFrameController implements ActionListener{
 	JTextField textArea;
 	JTextField resultField;
 	JList<String> formulaJList;
+	JList<String> commandJList;
 	
 	DefaultListModel<String> fomulaListModel;
+	DefaultListModel<String> commandListModel;
 	ArrayList<GraphModel> graphList;
 	
 	
@@ -87,6 +89,16 @@ public class MainFrameController implements ActionListener{
 	public void setFormulaJList(JList<String> formulaJList) {
 		this.formulaJList = formulaJList;
 	}
+	
+	
+
+	public void setCommandJList(JList<String> commandJList) {
+		this.commandJList = commandJList;
+	}
+
+	public void setCommandListModel(DefaultListModel<String> commandListModel) {
+		this.commandListModel = commandListModel;
+	}
 
 	public void onClickAdd(){
 		//textArea.setText(FormulaElement.parseFormula(textArea.getText()).toString());
@@ -118,9 +130,9 @@ public class MainFrameController implements ActionListener{
 	private void useFormula(){
 		int index = formulaJList.getSelectedIndex();
 		String selectedItem = fomulaListModel.get(index);
-		
-		if(selectedItem.matches("^[a-zA-Z]=[^=]+$")){
-			String[] comps = selectedItem.split("=");
+		String trimmed = selectedItem.replaceAll("\\s", "");
+		if(trimmed.matches("^[a-zA-Z]=[^=]+$")){
+			String[] comps = trimmed.split("=");
 			
 			FormulaElement element = storage.getStoredFormulas().get(comps[0]);
 			textArea.setText(selectedItem);
@@ -246,6 +258,8 @@ public class MainFrameController implements ActionListener{
 				//textArea.append(textArea.getText() + "\n");
 				//fomulaListModel.addElement(textArea.getText());
 				addToList = true;
+				fomulaListModel.addElement(textArea.getText());
+				formulaJList.ensureIndexIsVisible(fomulaListModel.size()-1);
 			}
 		} else if(text.matches("^eval\\s[a-zA-Z]$")){
 			String[] comps = text.split("\\s");
@@ -357,8 +371,10 @@ public class MainFrameController implements ActionListener{
 		
 		
 		if(addToList){
-			fomulaListModel.addElement(textArea.getText());
-			formulaJList.ensureIndexIsVisible(fomulaListModel.size()-1);
+//			fomulaListModel.addElement(textArea.getText());
+//			formulaJList.ensureIndexIsVisible(fomulaListModel.size()-1);
+			commandListModel.addElement(textArea.getText());
+			commandJList.ensureIndexIsVisible(commandListModel.size()-1);
 		}
 		
 		return true;

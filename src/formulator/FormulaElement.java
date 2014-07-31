@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-public class FormulaElement implements Serializable{
+public class FormulaElement{
 	Vector<VariableElement> variableList;
 //	protected String type;
 //	public String getType(){
